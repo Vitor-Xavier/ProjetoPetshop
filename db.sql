@@ -11,7 +11,8 @@ CREATE TABLE pessoa (
     email               VARCHAR(60),
     senha               VARCHAR(40),
     telefone            VARCHAR(20),
-    endereco            VARCHAR(80)
+    endereco            VARCHAR(80),
+	status          	BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE produto (
@@ -19,14 +20,16 @@ CREATE TABLE produto (
     nome                VARCHAR(80),
     descricao           VARCHAR(200),
     quantidade          INTEGER,
-    preco               DECIMAL(13, 2)
+    preco               DECIMAL(13, 2),
+	status          	BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE pedido (
     pedido_id       SERIAL PRIMARY KEY,
     usuario_id      INTEGER REFERENCES pessoa (pessoa_id),
     cliente_id      INTEGER REFERENCES pessoa (pessoa_id),
-    data_pedido     TIMESTAMP
+    data_pedido     TIMESTAMP,
+	status          BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE item_pedido (
@@ -34,6 +37,7 @@ CREATE TABLE item_pedido (
     pedido_id       INTEGER REFERENCES pedido(pedido_id),
     quantidade      INTEGER,
     preco_unitario  DECIMAL(13,2),
+    status          BOOLEAN DEFAULT TRUE,
     PRIMARY KEY(produto_id, pedido_id)
 );
 

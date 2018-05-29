@@ -1,5 +1,6 @@
 import sys
 import connect
+import importExport
 from tkinter import *
 import json
 
@@ -21,7 +22,7 @@ class FramePrincipal(Frame):
         super().__init__()
         self.master.title(self._title)
         self.master.resizable(False, False)
-        self.master.iconbitmap("PetShop/res/icon.ico")
+        self.master.iconbitmap("res/icon.ico")
         self.master["bg"] = self._backgroundColor
         self.centralizar(1000, 600) # Resolução da tela principal
         self.pack()
@@ -73,6 +74,7 @@ class FramePrincipal(Frame):
         self.btnExportar = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
         self.btnExportar["text"] = "Exportar dados"
         self.btnExportar["font"] = self._fontButton
+        self.btnExportar["command"] = self.btnExportarClick
         self.btnExportar.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         self.btnSobre = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
@@ -122,6 +124,8 @@ class FramePrincipal(Frame):
         # self.lblUsuario["text"] = "Usuários"
         # self.lblUsuario.pack(side=LEFT)
 
+    # Commands
+
     def btnProdutosClick(self):
         self.produtosFrame()
 
@@ -130,6 +134,11 @@ class FramePrincipal(Frame):
 
     def btnSobreClick(self):
         self.sobreFrame()
+
+    def btnExportarClick(self):
+        self.exportarFrame()
+
+    # Frames
 
     def sobreFrame(self):
         self.frameMain.destroy()
@@ -205,8 +214,6 @@ class FramePrincipal(Frame):
         # f = open("C:/Users/Elisa Yoko/Desktop/output.json","w")
         # json.dump(importados,f,sort_keys=True,indent=4)
         # f.close()
-         
-
 
     def clientesFrame(self):
         self.frameMain.destroy()
@@ -314,6 +321,38 @@ class FramePrincipal(Frame):
         self.btnAddProduto["font"] = self._fontButton
         self.btnAddProduto.pack(side=RIGHT, ipady=5, ipadx=10)
 
+    def exportarFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblExportar = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblExportar["text"] = "Exportar dados"
+        self.lblExportar["font"] = self._fontSubtitle
+        self.lblExportar.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.frameExportar = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameExportar.pack(anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
+
+        self.lblExpTudo = Label(self.frameExportar, bg=self._backgroundColor)
+        self.lblExpTudo["text"] = "Exportar todos os dados"
+        self.lblExpTudo["font"] = self._fontText
+        self.lblExpTudo.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
+
+        self.lblExportarTudo = Label(self.frameExportar, bg=self._backgroundColor)
+        self.lblExportarTudo["justify"] = LEFT
+        self.lblExportarTudo["text"] = "Exporta todos os dados armazenados no sistema em um único arquivo em formato JSON, \nque possui o conteudo das tabelas Pessoa, Produto, Pedido e ItemPedido."
+        self.lblExportarTudo.pack(side=TOP, ipadx=10)
+
+        self.btnExportarTudo = Button(self.frameExportar, bg=self._backgroundColor)
+        self.btnExportarTudo["text"] = "Exportar"
+        self.btnExportarTudo["command"] = self.btnExportarTudoClick
+        self.btnExportarTudo.pack(side=TOP, ipadx=10)
+
     def btnInativaProdutoClick(self):
         pos = self.listProdutos.curselection()
         item = self.listProdutos.get(pos)
@@ -334,11 +373,13 @@ class FramePrincipal(Frame):
         for item in clientes:
             self.listClientes.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Telefone: %-16s Endereco: %-40s" %(item[0], item[1], item[2], item[3], item[4]))
 
-
     def onClienteSelected(self, event):
         pos = self.listClientes.curselection()
         item = self.listClientes.get(pos)
         print("Item: %s" %item)
+
+    def btnExportarTudoClick(self):
+        importExport.exportarBanco("C:\\banco.json")
 
     def btnUpdateClienteClick(self):
         pos = self.listClientes.curselection()
@@ -346,6 +387,16 @@ class FramePrincipal(Frame):
         print("Clicked Item: %s" %item)
         cod = int(item[3:7])
         print("Id: " + str(cod))
+
+    def getSelectedPessoa(self):
+        pos = self.listClientes.curselection()
+        item = self.listClientes.get(pos)
+        return int(item[3:7])
+
+    def getSelectedProduto(self):
+        pos = self.listClientes.curselection()
+        item = self.listClientes.get(pos)
+        return int(item[3:7])
 
     def btnSairClick(self):
         sys.exit(0)

@@ -1,4 +1,5 @@
 import psycopg2 as pg
+import psycopg2.extras as pg_ex
 import models
 
 def initialize():
@@ -9,9 +10,10 @@ def initialize():
             user="postgres",
             password="fatec",
             host="127.0.0.1",
-            port="5432"
+            port="5432",
+            cursor_factory=pg_ex.NamedTupleCursor
         )
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=pg_ex.NamedTupleCursor)
 
 def finalize():
     global conn
@@ -85,6 +87,40 @@ def insertPedido(pedido):
     sql_values = cursor.mogrify(sql, (pedido.pedido_id, pedido.usuario_id, pedido.cliente_id, pedido.data_pedido))
     cursor.execute(sql_values)
     finalize()
+
+def selectPedidos(status=True):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT * FROM pedido" 
+    sql += " WHERE status = TRUE" if status else ""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    finalize()
+    return result
+
+def selectItens(status=True):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT * FROM pedido" 
+    sql += " WHERE status = TRUE" if status else ""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    finalize()
+    return result
+
+def selectItensPorPedido(pedidoId, status=True):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT * FROM pedido WHERE pedidoId = %s" 
+    sql += " AND status = TRUE" if status else ""
+    sql_values = cursor.mogrify(sql, str(pedidoId))
+    cursor.execute(sql_values)
+    result = cursor.fetchall()
+    finalize()
+    return result
 
 def insertItemPedido(itemPedido):
     global conn
