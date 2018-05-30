@@ -3,6 +3,7 @@ import connect
 import importExport
 from tkinter import *
 import json
+import os
 
 class FramePrincipal(Frame):
     _title = "Pet Shop"
@@ -22,7 +23,7 @@ class FramePrincipal(Frame):
         super().__init__()
         self.master.title(self._title)
         self.master.resizable(False, False)
-        self.master.iconbitmap("res/icon.ico")
+        #self.master.iconbitmap("res/icon.ico")
         self.master["bg"] = self._backgroundColor
         self.centralizar(1000, 600) # Resolução da tela principal
         self.pack()
@@ -154,13 +155,26 @@ class FramePrincipal(Frame):
         self.lblSobre["font"] = self._fontSubtitle
         self.lblSobre.pack(side=TOP, ipady=20, ipadx=40)
 
+        self.frameTema = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameTema.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
+
+        self.lblTema = Label(self.frameTema, bg=self._backgroundColor)
+        self.lblTema["text"] = "Tema"
+        self.lblTema["font"] = self._fontText
+        self.lblTema.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=5)
+
+        self.lblTemaInfo = Label(self.frameTema, bg=self._backgroundColor)
+        self.lblTemaInfo["justify"] = LEFT
+        self.lblTemaInfo["text"] = "O tema escolhido pela dupla é o de Pet Shop."
+        self.lblTemaInfo.pack(side=TOP, ipadx=10)
+
         self.frameApp = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
+        self.frameApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=35)
 
         self.lblApp = Label(self.frameApp, bg=self._backgroundColor)
-        self.lblApp["text"] = "Tema e Objetivo"
+        self.lblApp["text"] = "Objetivo"
         self.lblApp["font"] = self._fontText
-        self.lblApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
+        self.lblApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=5)
 
         self.lblAppInfo = Label(self.frameApp, bg=self._backgroundColor)
         self.lblAppInfo["justify"] = LEFT
@@ -168,21 +182,21 @@ class FramePrincipal(Frame):
         self.lblAppInfo.pack(side=TOP, ipadx=10)
 
         self.frameDevs = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameDevs.pack(side=TOP, fill=Y, expand=True, anchor=W, ipadx=60, pady=35)
+        self.frameDevs.pack(side=TOP, fill=Y, expand=True, anchor=W, ipadx=60)
 
         self.lblDevs = Label(self.frameDevs, bg=self._backgroundColor)
         self.lblDevs["text"] = "Desenvolvedores"
         self.lblDevs["font"] = self._fontText
-        self.lblDevs.pack(side=TOP, anchor=W, ipadx=60)
+        self.lblDevs.pack(side=TOP, anchor=W, ipadx=60, pady=5)
 
         self.lblDev1 = Label(self.frameDevs, bg=self._backgroundColor)
         self.lblDev1["justify"] = LEFT
-        self.lblDev1["text"] = "%s       RA: %s" %("Fernando Marchetti", "2840481523011")
+        self.lblDev1["text"] = "%-25s RA: %-14s" %("Fernando Marchetti", "2840481523011")
         self.lblDev1.pack(side=TOP, ipadx=10)
 
         self.lblDev2 = Label(self.frameDevs, bg=self._backgroundColor)
         self.lblDev2["justify"] = LEFT
-        self.lblDev2["text"] = "%s      RA: %s" %(" Vitor Xavier de Souza", "2840481523039")
+        self.lblDev2["text"] = "%-25s  RA: %-14s" %("Vitor Xavier de Souza", "2840481523039")
         self.lblDev2.pack(side=TOP, ipadx=10)
 
     def importaFrame(self):
@@ -238,10 +252,7 @@ class FramePrincipal(Frame):
         self.listClientes["height"] = 10
         self.listClientes["selectmode"] = SINGLE
 
-        clientes = connect.selectPessoas()
-        for item in clientes:
-            self.listClientes.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Telefone: %-16s Endereco: %-40s" %(item[0], item[1], item[2], item[3], item[4]))
-
+        self.carregaClientes()
         self.listClientes.bind("<<ListboxSelect>>", self.onClienteSelected)
 
         self.listClientes.pack(side=LEFT, fill=BOTH, expand=True)
@@ -291,10 +302,7 @@ class FramePrincipal(Frame):
         self.listProdutos["height"] = 10
         self.listProdutos["selectmode"] = SINGLE
 
-        produtos = connect.selectProdutos()
-        for item in produtos:
-            self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
-
+        self.carregaProdutos()
         #self.listProdutos.bind("<<ListboxSelect>>", self.onProdutoSelected)
 
         self.listProdutos.pack(side=LEFT, fill=BOTH, expand=True)
@@ -335,57 +343,91 @@ class FramePrincipal(Frame):
         self.lblExportar["font"] = self._fontSubtitle
         self.lblExportar.pack(side=TOP, ipady=20, ipadx=40)
 
+        self.frameExpName = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameExpName.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblExpName = Label(self.frameExpName, bg=self._backgroundColor)
+        self.lblExpName["text"] = "Nome do arquivo"
+        self.lblExpName["font"] = self._fontText
+        self.lblExpName.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryExpName = Entry(self.frameExpName, bg=self._backgroundColor)
+        self.entryExpName.insert(0, "backup")
+        self.entryExpName.pack(side=TOP, fill=X, padx=15, pady=5)
+
+        self.frameExpPath = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameExpPath.pack(anchor=N, fill=BOTH, padx=60, ipadx=60, pady=35)
+
+        self.lblExpPath = Label(self.frameExpPath, bg=self._backgroundColor)
+        self.lblExpPath["text"] = "Caminho para exportar os dados"
+        self.lblExpPath["font"] = self._fontText
+        self.lblExpPath.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryExpPath = Entry(self.frameExpPath, bg=self._backgroundColor)
+        self.entryExpPath.insert(0, os.path.join(os.sep, os.environ["SYSTEMDRIVE"], os.environ["HOMEPATH"], "Desktop"))
+        self.entryExpPath.pack(side=TOP, fill=X, padx=15, pady=5)
+
         self.frameExportar = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameExportar.pack(anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
+        self.frameExportar.pack(side=TOP, fill=Y, anchor=W, ipadx=60, padx=60)
 
         self.lblExpTudo = Label(self.frameExportar, bg=self._backgroundColor)
-        self.lblExpTudo["text"] = "Exportar todos os dados"
+        self.lblExpTudo["text"] = "Exportar dados"
         self.lblExpTudo["font"] = self._fontText
-        self.lblExpTudo.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
+        self.lblExpTudo["justify"] = LEFT
+        self.lblExpTudo.pack(side=TOP, anchor=W, pady=5)
 
         self.lblExportarTudo = Label(self.frameExportar, bg=self._backgroundColor)
         self.lblExportarTudo["justify"] = LEFT
-        self.lblExportarTudo["text"] = "Exporta todos os dados armazenados no sistema em um único arquivo em formato JSON, \nque possui o conteudo das tabelas Pessoa, Produto, Pedido e ItemPedido."
-        self.lblExportarTudo.pack(side=TOP, ipadx=10)
+        self.lblExportarTudo["text"] = "Exporta os dados armazenados no sistema em um arquivo no formato JSON, que pode possui o conteúdo das tabelas \nPessoa, Produto, Pedido ou ItemPedido, além de possibilitar a exportação de todos os dados."
+        self.lblExportarTudo.pack(side=TOP, fill=Y, anchor=W, ipadx=10)
 
-        self.btnExportarTudo = Button(self.frameExportar, bg=self._backgroundColor)
-        self.btnExportarTudo["text"] = "Exportar"
-        self.btnExportarTudo["command"] = self.btnExportarTudoClick
-        self.btnExportarTudo.pack(side=TOP, ipadx=10)
+        self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameExpTypes.pack(side=TOP, fill=Y, anchor=N, ipadx=60, padx=60, pady=10)
+
+        expTypes = ["Tudo", "Pessoas", "Produtos", "Pedidos", "ItensPedidos"]
+        self.expTypeVar = StringVar()
+        for item in expTypes:
+            rdb = Radiobutton(self.frameExpTypes, bg=self._backgroundColor)
+            rdb["text"] = item
+            rdb["variable"] = self.expTypeVar
+            #rdb["command"] = self.onRadioSelect
+            rdb["value"] = item
+            rdb.pack(side=LEFT, anchor=N, ipadx=8)
+        self.expTypeVar.set("Tudo")
+
+        self.btnExportarDados = Button(self.frameMain, bg=self._backgroundColor)
+        self.btnExportarDados["text"] = "Exportar"
+        self.btnExportarDados["command"] = self.btnExportarDadosClick
+        self.btnExportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60)
 
     def btnInativaProdutoClick(self):
-        pos = self.listProdutos.curselection()
-        item = self.listProdutos.get(pos)
-        cod = int(item[3:7])
+        cod = self.getSelectedProduto()
         connect.inativaProduto(cod)
-        produtos = connect.selectProdutos()
-        self.listProdutos.delete(0, END)
-        for item in produtos:
-            self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
+        self.carregaProdutos()
 
     def btnInativaPessoaClick(self):
-        pos = self.listClientes.curselection()
-        item = self.listClientes.get(pos)
-        cod = int(item[3:7])
+        cod = self.getSelectedPessoa()
         connect.inativaPessoa(cod)
-        clientes = connect.selectPessoas()
-        self.listClientes.delete(0, END)
-        for item in clientes:
-            self.listClientes.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Telefone: %-16s Endereco: %-40s" %(item[0], item[1], item[2], item[3], item[4]))
+        self.carregaClientes()
 
     def onClienteSelected(self, event):
-        pos = self.listClientes.curselection()
-        item = self.listClientes.get(pos)
-        print("Item: %s" %item)
+        cod = self.getSelectedPessoa()
+        print("Id: %s" %str(cod))
 
-    def btnExportarTudoClick(self):
-        importExport.exportarBanco("C:\\banco.json")
+    def btnExportarDadosClick(self):
+        if (self.expTypeVar.get() == "Tudo"):
+            importExport.exportarBanco(self.entryExpName.get(), self.entryExpPath.get())
+        elif (self.expTypeVar.get() == "Pessoas"):
+            importExport.exportarPessoas(self.entryExpName.get(), self.entryExpPath.get())
+        elif (self.expTypeVar.get() == "Produtos"):
+            importExport.exportarProdutos(self.entryExpName.get(), self.entryExpPath.get())
+        elif (self.expTypeVar.get() == "Pedidos"):
+            importExport.exportarPedidos(self.entryExpName.get(), self.entryExpPath.get())
+        elif (self.expTypeVar.get() == "ItensPedidos"):
+            importExport.exportarItens(self.entryExpName.get(), self.entryExpPath.get())
 
     def btnUpdateClienteClick(self):
-        pos = self.listClientes.curselection()
-        item = self.listClientes.get(pos)
-        print("Clicked Item: %s" %item)
-        cod = int(item[3:7])
+        cod = self.getSelectedPessoa()
         print("Id: " + str(cod))
 
     def getSelectedPessoa(self):
@@ -400,6 +442,23 @@ class FramePrincipal(Frame):
 
     def btnSairClick(self):
         sys.exit(0)
+
+    # Atualiza listas
+
+    def carregaClientes(self):
+        clientes = connect.selectPessoas()
+        self.listClientes.delete(0, END)
+        for item in clientes:
+            self.listClientes.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Telefone: %-16s Endereco: %-40s" %(item[0], item[1], item[2], item[3], item[4]))
+
+
+    def carregaProdutos(self):
+        produtos = connect.selectProdutos()
+        self.listProdutos.delete(0, END)
+        for item in produtos:
+            self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
+
+    # Auxiliar
 
     def centralizar(self, largura, altura):
         px = int((self.master.winfo_screenwidth() - largura) / 2)

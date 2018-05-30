@@ -21,6 +21,8 @@ def finalize():
     conn.commit()
     conn.close()
 
+# Pessoa
+
 def insertPessoa(user):
     global conn
     global cursor
@@ -49,6 +51,8 @@ def inativaPessoa(pessoaId):
     sql_values = cursor.mogrify(sql, str(pessoaId))
     cursor.execute(sql_values)
     finalize()
+
+# Produto
 
 def insertProduto(produto):
     global conn
@@ -79,6 +83,8 @@ def inativaProduto(produtoId):
     cursor.execute(sql_values)
     finalize()
 
+# Pedido
+
 def insertPedido(pedido):
     global conn
     global cursor
@@ -99,6 +105,26 @@ def selectPedidos(status=True):
     finalize()
     return result
 
+def inativaPedido(pedidoId):
+    global conn
+    global cursor
+    initialize()
+    sql = "UPDATE pedido SET status = FALSE WHERE pedido_id = %s"
+    sql_values = cursor.mogrify(sql, str(pedidoId))
+    cursor.execute(sql_values)
+    finalize()
+
+# Itens
+
+def insertItemPedido(itemPedido):
+    global conn
+    global cursor
+    initialize()
+    sql = "INSERT INTO itemPedido (produto_id, pedido_id, quantidade, preco_unitario) VALUES (%s, %s, %s, %s)"
+    sql_values = cursor.mogrify(sql, (itemPedido.produto_id, itemPedido.pedido_id, itemPedido.quantidade, itemPedido.preco_unitario))
+    cursor.execute(sql_values)
+    finalize()
+
 def selectItens(status=True):
     global conn
     global cursor
@@ -114,23 +140,22 @@ def selectItensPorPedido(pedidoId, status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM pedido WHERE pedidoId = %s" 
+    sql = "SELECT * FROM pedido WHERE pedido_id = %s" 
     sql += " AND status = TRUE" if status else ""
-    sql_values = cursor.mogrify(sql, str(pedidoId))
+    sql_values = cursor.mogrify(sql, (pedidoId))
     cursor.execute(sql_values)
     result = cursor.fetchall()
     finalize()
     return result
 
-def insertItemPedido(itemPedido):
+def inativaItemPedido(pedidoId, produtoId):
     global conn
     global cursor
     initialize()
-    sql = "INSERT INTO itemPedido (produto_id, pedido_id, quantidade, preco_unitario) VALUES (%s, %s, %s, %s)"
-    sql_values = cursor.mogrify(sql, (itemPedido.produto_id, itemPedido.pedido_id, itemPedido.quantidade, itemPedido.preco_unitario))
+    sql = "UPDATE item_pedido SET status = FALSE WHERE pedido_id = %s AND produto_id = %s"
+    sql_values = cursor.mogrify(sql, (pedidoId, produtoId))
     cursor.execute(sql_values)
     finalize()
-
 
 def importaDados():
     global conn
@@ -142,7 +167,6 @@ def importaDados():
     finalize()
     return result
     
-
 p = models.Pessoa()
 p.nome = "Usuário 1"
 p.email = "usuario@mail.com"
