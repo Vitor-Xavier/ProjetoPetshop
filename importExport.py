@@ -2,6 +2,7 @@ import simplejson as json
 import zipfile as zip
 import os
 import connect
+import requests
 
 def exportarBanco(filename, path):
     filename += ".json"
@@ -83,3 +84,10 @@ def compactarArquivo(filename, path):
     zf.write(filename)
     zf.close()
     os.remove(os.path.join(os.sep, path, filename))
+
+def importarPessoas(file_url):
+    pessoas = requests.get(url=file_url)
+    for pessoa in pessoas.json():
+        print(pessoa)
+
+importarPessoas("https://raw.githubusercontent.com/Vitor-Xavier/JsonTst/master/pessoas_1.json")

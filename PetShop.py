@@ -1,5 +1,6 @@
 import sys
 import connect
+import models
 import importExport
 from tkinter import *
 import json
@@ -213,8 +214,8 @@ class FramePrincipal(Frame):
         self.lblDigName["font"] = self._fontText
         self.lblDigName.pack(side=TOP, fill=Y, anchor=W)
 
-        self.entryName = Entry(self.frameDigName, bg=self._backgroundColor)
-        self.entryName.pack(side=TOP, fill=X, padx=15, pady=5)
+        self.entryName = Entry(self.frameDigName, bg=self._backgroundColor,width=50)
+        self.entryName.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigEmail = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameDigEmail.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
@@ -224,8 +225,8 @@ class FramePrincipal(Frame):
         self.lblDigEmail["font"] = self._fontText
         self.lblDigEmail.pack(side=TOP, fill=Y, anchor=W)
 
-        self.entryMail = Entry(self.frameDigEmail, bg=self._backgroundColor)
-        self.entryMail.pack(side=TOP, fill=X, padx=15, pady=5)
+        self.entryMail = Entry(self.frameDigEmail, bg=self._backgroundColor,width=50)
+        self.entryMail.pack(side=TOP, anchor=W, padx=15, pady=5)
         
         self.frameDigFone = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameDigFone.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
@@ -235,8 +236,8 @@ class FramePrincipal(Frame):
         self.lblDigFone["font"] = self._fontText
         self.lblDigFone.pack(side=TOP, fill=Y, anchor=W)
 
-        self.entryFone = Entry(self.frameDigFone, bg=self._backgroundColor)
-        self.entryFone.pack(side=TOP, fill=X, padx=15, pady=5)
+        self.entryFone = Entry(self.frameDigFone, bg=self._backgroundColor,width=50)
+        self.entryFone.pack(side=TOP, anchor =W, padx=15, pady=5)
 
 
         self.frameDigEndereco = Frame(self.frameMain, bg=self._backgroundColor)
@@ -247,16 +248,14 @@ class FramePrincipal(Frame):
         self.lblDigEndereco["font"] = self._fontText
         self.lblDigEndereco.pack(side=TOP, fill=Y, anchor=W)
 
-        self.entryEndereco = Entry(self.frameDigEndereco, bg=self._backgroundColor)
-        self.entryEndereco.pack(side=TOP, fill=X, padx=15, pady=5,)
+        self.entryEndereco = Entry(self.frameDigEndereco, bg=self._backgroundColor,width=50)
+        self.entryEndereco.pack(side=TOP, anchor = W, padx=15, pady=5,)
 
         self.btnAddCliente = Button(self.frameMain, bg=self._menuColor, borderwidth=1)
         self.btnAddCliente["text"] = "Adicionar"
         self.btnAddCliente["font"] = self._fontButton
-        #self.btnAddCliente["command"] = self.btnAddClienteClick
+        self.btnAddCliente["command"] = self.btnAddClienteBancoClick
         self.btnAddCliente.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
-
-
 
     def produtosFrame(self):
         self.frameMain.destroy()
@@ -503,6 +502,17 @@ class FramePrincipal(Frame):
     def btnAddClienteClick(self):
         self.addClienteFrame()
 
+    def btnAddClienteBancoClick(self):
+        pessoa = models.Pessoa()
+        pessoa.nome = self.entryName.get()
+        pessoa.email = self.entryMail.get()
+        pessoa.telefone = self.entryFone.get()
+        pessoa.endereco = self.entryEndereco.get()
+        connect.insertPessoa(pessoa)
+        self.clientesFrame()
+
+        
+    
     def getSelectedPessoa(self):
         pos = self.listClientes.curselection()
         item = self.listClientes.get(pos)

@@ -23,12 +23,12 @@ def finalize():
 
 # Pessoa
 
-def insertPessoa(user):
+def insertPessoa(pessoa):
     global conn
     global cursor
     initialize()
     sql = "INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES (%s, %s, %s, %s, %s)"
-    sql_values = cursor.mogrify(sql, (user.nome, user.email, user.senha, user.telefone, user.endereco))
+    sql_values = cursor.mogrify(sql, (pessoa.nome, pessoa.email, pessoa.senha, pessoa.telefone, pessoa.endereco))
     cursor.execute(sql_values)
     finalize()
 
@@ -36,7 +36,7 @@ def selectPessoas(status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM pessoa"
+    sql = "SELECT pessoa_id,nome, email,telefone,endereco FROM pessoa"
     sql += " WHERE status = TRUE" if status else ""
     cursor.execute(sql)
     result = cursor.fetchall()
