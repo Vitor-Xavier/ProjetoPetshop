@@ -19,6 +19,7 @@ class FramePrincipal(Frame):
     _primaryTextColor = "#FFFFFF"
     _secondaryTextColor = "#CCFFFFFF"
 
+    #Inicializando o Menu Principal
     def __init__(self, master=None):
         super().__init__()
         self.master.title(self._title)
@@ -31,6 +32,12 @@ class FramePrincipal(Frame):
         self.addMenu()
         self.addFrame()
 
+    def centralizar(self, largura, altura):
+        px = int((self.master.winfo_screenwidth() - largura) / 2)
+        py = int((self.master.winfo_screenheight() - altura) / 2)
+        self.master.geometry("{}x{}+{}+{}".format(largura, altura, px, py))
+
+    #Titulo Menu
     def addTitle(self, title):
         self.frameTitle = Frame(bg=self._barColor, height=120)
         self.frameTitle.pack(side=TOP, fill=X)
@@ -40,92 +47,80 @@ class FramePrincipal(Frame):
         self.lblTitle["fg"] = self._primaryTextColor
         self.lblTitle["text"] = title
         self.lblTitle.pack(side=LEFT, ipady=20, ipadx=40)
-
+   
+    #Menus Principais Laterais
     def addMenu(self):
         self.frameMenu = Frame(bg=self._menuColor)
         self.frameMenu.pack(side=LEFT, fill=Y)
 
-        # self.lblProdutos = Label(self.frameMenu, bg=self._menuColor)
-        # self.lblProdutos["text"] = "Usuários"
-        # self.lblProdutos.pack(side=TOP, ipady=20, ipadx=60)
-
-        self.btnUsuarios = Button(self.frameMenu, bg=self._menuColor)
+        #Botão Usuarios
+        self.btnUsuarios = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnUsuarios["text"] = "Clientes"
         self.btnUsuarios["font"] = self._fontButton
         self.btnUsuarios["command"] = self.btnUsuariosClick
         self.btnUsuarios.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
-        self.btnProdutos = Button(self.frameMenu, bg=self._menuColor)
+        #Botão Produtos
+        self.btnProdutos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnProdutos["text"] = "Produtos"
         self.btnProdutos["font"] = self._fontButton
         self.btnProdutos["command"] = self.btnProdutosClick
         self.btnProdutos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
-        self.btnPedidos = Button(self.frameMenu, bg=self._menuColor)
+        #Botão Pedidos
+        self.btnPedidos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnPedidos["text"] = "Pedidos"
         self.btnPedidos["font"] = self._fontButton
         self.btnPedidos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
-        self.btnImportar = Button(self.frameMenu, bg=self._menuColor)
+        #Botão Importar
+        self.btnImportar = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnImportar["text"] = "Importar dados"
         self.btnImportar["font"] = self._fontButton
         self.btnImportar["command"] = self.btnImportaClick
         self.btnImportar.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
+        #Botão Exportar
         self.btnExportar = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
         self.btnExportar["text"] = "Exportar dados"
         self.btnExportar["font"] = self._fontButton
         self.btnExportar["command"] = self.btnExportarClick
         self.btnExportar.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
+        #Botão Sobre
         self.btnSobre = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
         self.btnSobre["text"] = "Sobre" 
         self.btnSobre["font"] = self._fontButton
         self.btnSobre["command"] = self.btnSobreClick
         self.btnSobre.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
+        #Botão Sair
         self.btnSair = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
         self.btnSair["text"] = "Sair"
-        #self.btnSair.configure(state = "normal", relief="raised", bg = "red")
         self.btnSair.bind("<Enter>", self.on_enter)
         self.btnSair.bind("<Leave>", self.on_leave)
-        #self.btnSair.config(highlightthickness=10)
-        #self.btnSair.config(highlightbackground=self._menuColor)
         self.btnSair["font"] = self._fontButton
         self.btnSair["command"] = self.btnSairClick
         self.btnSair.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
+
+    #----Animação Botão Sair
     def on_enter(self, e):
         self.btnSair['background'] = 'red'
 
     def on_leave(self, e):
         self.btnSair['background'] = 'SystemButtonFace'
-        
+
+
+    #Tela lateral dos Menus principais
     def addFrame(self):
         self.frameMain = Frame(bg=self._backgroundColor)
         self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
 
-        self.lblTst = Label(self.frameMain, bg=self._backgroundColor)
-        self.lblTst["text"] = "Teste"
-        self.lblTst.pack()
-
-        self.btnTrocar = Button(self.frameMain)
-        self.btnTrocar["text"] = "Usuários"
-        self.btnTrocar["command"] = self.btnUsuariosClick
-        self.btnTrocar.pack()
+    # Commands dos botões laterias
 
     def btnUsuariosClick(self):
         self.clientesFrame()
-        # self.frameMain.destroy()
-
-        # self.frameMain = Frame(bg=self._backgroundColor)
-        # self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
-
-        # self.lblUsuario = Label(self.frameMain, bg=self._backgroundColor)
-        # self.lblUsuario["text"] = "Usuários"
-        # self.lblUsuario.pack(side=LEFT)
-
-    # Commands
 
     def btnProdutosClick(self):
         self.produtosFrame()
@@ -133,101 +128,16 @@ class FramePrincipal(Frame):
     def btnImportaClick(self):
         self.importaFrame()
 
-    def btnSobreClick(self):
-        self.sobreFrame()
-
     def btnExportarClick(self):
         self.exportarFrame()
 
-    # Frames
+    def btnSobreClick(self):
+        self.sobreFrame()
 
-    def sobreFrame(self):
-        self.frameMain.destroy()
+    def btnSairClick(self):
+        sys.exit(0)
 
-        self.frameMain = Frame(bg=self._backgroundColor)
-        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
-
-        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
-
-        self.lblSobre = Label(self.frameSub, bg=self._backgroundColor)
-        self.lblSobre["text"] = "Sobre"
-        self.lblSobre["font"] = self._fontSubtitle
-        self.lblSobre.pack(side=TOP, ipady=20, ipadx=40)
-
-        self.frameTema = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameTema.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
-
-        self.lblTema = Label(self.frameTema, bg=self._backgroundColor)
-        self.lblTema["text"] = "Tema"
-        self.lblTema["font"] = self._fontText
-        self.lblTema.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=5)
-
-        self.lblTemaInfo = Label(self.frameTema, bg=self._backgroundColor)
-        self.lblTemaInfo["justify"] = LEFT
-        self.lblTemaInfo["text"] = "O tema escolhido pela dupla é o de Pet Shop."
-        self.lblTemaInfo.pack(side=TOP, ipadx=10)
-
-        self.frameApp = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=35)
-
-        self.lblApp = Label(self.frameApp, bg=self._backgroundColor)
-        self.lblApp["text"] = "Objetivo"
-        self.lblApp["font"] = self._fontText
-        self.lblApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=5)
-
-        self.lblAppInfo = Label(self.frameApp, bg=self._backgroundColor)
-        self.lblAppInfo["justify"] = LEFT
-        self.lblAppInfo["text"] = "O prosósito da aplicação é auxiliar o controle e gerenciamento de um estabelecimento que possua o intuito de\n comercializar produtos como ração e acessórios para animais."
-        self.lblAppInfo.pack(side=TOP, ipadx=10)
-
-        self.frameDevs = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameDevs.pack(side=TOP, fill=Y, expand=True, anchor=W, ipadx=60)
-
-        self.lblDevs = Label(self.frameDevs, bg=self._backgroundColor)
-        self.lblDevs["text"] = "Desenvolvedores"
-        self.lblDevs["font"] = self._fontText
-        self.lblDevs.pack(side=TOP, anchor=W, ipadx=60, pady=5)
-
-        self.lblDev1 = Label(self.frameDevs, bg=self._backgroundColor)
-        self.lblDev1["justify"] = LEFT
-        self.lblDev1["text"] = "%-25s RA: %-14s" %("Fernando Marchetti", "2840481523011")
-        self.lblDev1.pack(side=TOP, ipadx=10)
-
-        self.lblDev2 = Label(self.frameDevs, bg=self._backgroundColor)
-        self.lblDev2["justify"] = LEFT
-        self.lblDev2["text"] = "%-25s  RA: %-14s" %("Vitor Xavier de Souza", "2840481523039")
-        self.lblDev2.pack(side=TOP, ipadx=10)
-
-    def importaFrame(self):
-        self.frameMain.destroy()
-
-        self.frameMain = Frame(bg=self._backgroundColor)
-        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
-
-        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
-
-        self.lblimporta = Label(self.frameSub, bg=self._backgroundColor)
-        self.lblimporta["text"] = "Importar dados para Json"
-        self.lblimporta["font"] = self._fontSubtitle
-        self.lblimporta.pack(side=TOP, ipady=20, ipadx=40)
-
-        self.lblimporta = Frame(self.frameMain, bg=self._backgroundColor)
-        self.lblimporta.pack(anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
-
-        #importados = {}
-        importados = []
-        trasferencia = connect.importaDados()
-        print(trasferencia)
-        # for row in trasferencia:
-        #     #i = 0
-        #     importados.append({"id": row[0], "nome": row[1], "email": row[2], "senha": row[3], "telefone": row[4], "endereco": row[5]})        
-        #     #importados["pessoa%d" %i] = {"id": row[0], "nome": row[1], "email": row[2], "senha": row[3], "telefone": row[4], "endereco": row[5]}
-        #     # i = i +1
-        # f = open("C:/Users/Elisa Yoko/Desktop/output.json","w")
-        # json.dump(importados,f,sort_keys=True,indent=4)
-        # f.close()
+    # Frames Criados ao Clicar no Botão Lateral
 
     def clientesFrame(self):
         self.frameMain.destroy()
@@ -328,6 +238,36 @@ class FramePrincipal(Frame):
         self.btnAddProduto["text"] = "Adicionar"
         self.btnAddProduto["font"] = self._fontButton
         self.btnAddProduto.pack(side=RIGHT, ipady=5, ipadx=10)
+   
+    def importaFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblimporta = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblimporta["text"] = "Importar dados para Json"
+        self.lblimporta["font"] = self._fontSubtitle
+        self.lblimporta.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.lblimporta = Frame(self.frameMain, bg=self._backgroundColor)
+        self.lblimporta.pack(anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
+
+        #importados = {}
+        importados = []
+        trasferencia = connect.importaDados()
+        print(trasferencia)
+        # for row in trasferencia:
+        #     #i = 0
+        #     importados.append({"id": row[0], "nome": row[1], "email": row[2], "senha": row[3], "telefone": row[4], "endereco": row[5]})        
+        #     #importados["pessoa%d" %i] = {"id": row[0], "nome": row[1], "email": row[2], "senha": row[3], "telefone": row[4], "endereco": row[5]}
+        #     # i = i +1
+        # f = open("C:/Users/Elisa Yoko/Desktop/output.json","w")
+        # json.dump(importados,f,sort_keys=True,indent=4)
+        # f.close()
 
     def exportarFrame(self):
         self.frameMain.destroy()
@@ -400,6 +340,67 @@ class FramePrincipal(Frame):
         self.btnExportarDados["command"] = self.btnExportarDadosClick
         self.btnExportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60)
 
+    def sobreFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblSobre = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblSobre["text"] = "Sobre"
+        self.lblSobre["font"] = self._fontSubtitle
+        self.lblSobre.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.frameTema = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameTema.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
+
+        self.lblTema = Label(self.frameTema, bg=self._backgroundColor)
+        self.lblTema["text"] = "Tema"
+        self.lblTema["font"] = self._fontText
+        self.lblTema.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=5)
+
+        self.lblTemaInfo = Label(self.frameTema, bg=self._backgroundColor)
+        self.lblTemaInfo["justify"] = LEFT
+        self.lblTemaInfo["text"] = "O tema escolhido pela dupla é o de Pet Shop."
+        self.lblTemaInfo.pack(side=TOP, ipadx=10)
+
+        self.frameApp = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=35)
+
+        self.lblApp = Label(self.frameApp, bg=self._backgroundColor)
+        self.lblApp["text"] = "Objetivo"
+        self.lblApp["font"] = self._fontText
+        self.lblApp.pack(side=TOP, fill=Y, anchor=W, ipadx=60, pady=5)
+
+        self.lblAppInfo = Label(self.frameApp, bg=self._backgroundColor)
+        self.lblAppInfo["justify"] = LEFT
+        self.lblAppInfo["text"] = "O prosósito da aplicação é auxiliar o controle e gerenciamento de um estabelecimento que possua o intuito de\n comercializar produtos como ração e acessórios para animais."
+        self.lblAppInfo.pack(side=TOP, ipadx=10)
+
+        self.frameDevs = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDevs.pack(side=TOP, fill=Y, expand=True, anchor=W, ipadx=60)
+
+        self.lblDevs = Label(self.frameDevs, bg=self._backgroundColor)
+        self.lblDevs["text"] = "Desenvolvedores"
+        self.lblDevs["font"] = self._fontText
+        self.lblDevs.pack(side=TOP, anchor=W, ipadx=60, pady=5)
+
+        self.lblDev1 = Label(self.frameDevs, bg=self._backgroundColor)
+        self.lblDev1["justify"] = LEFT
+        self.lblDev1["text"] = "%-25s RA: %-14s" %("Fernando Marchetti", "2840481523011")
+        self.lblDev1.pack(side=TOP, ipadx=10)
+
+        self.lblDev2 = Label(self.frameDevs, bg=self._backgroundColor)
+        self.lblDev2["justify"] = LEFT
+        self.lblDev2["text"] = "%-25s  RA: %-14s" %("Vitor Xavier de Souza", "2840481523039")
+        self.lblDev2.pack(side=TOP, ipadx=10)
+
+
+    # Funcinalidades dentro dos Frames
+    
     def btnInativaProdutoClick(self):
         cod = self.getSelectedProduto()
         connect.inativaProduto(cod)
@@ -440,9 +441,6 @@ class FramePrincipal(Frame):
         item = self.listClientes.get(pos)
         return int(item[3:7])
 
-    def btnSairClick(self):
-        sys.exit(0)
-
     # Atualiza listas
 
     def carregaClientes(self):
@@ -451,19 +449,13 @@ class FramePrincipal(Frame):
         for item in clientes:
             self.listClientes.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Telefone: %-16s Endereco: %-40s" %(item[0], item[1], item[2], item[3], item[4]))
 
-
     def carregaProdutos(self):
         produtos = connect.selectProdutos()
         self.listProdutos.delete(0, END)
         for item in produtos:
             self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
 
-    # Auxiliar
 
-    def centralizar(self, largura, altura):
-        px = int((self.master.winfo_screenwidth() - largura) / 2)
-        py = int((self.master.winfo_screenheight() - altura) / 2)
-        self.master.geometry("{}x{}+{}+{}".format(largura, altura, px, py))
 
 app = FramePrincipal()
 app.mainloop()
