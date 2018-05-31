@@ -173,7 +173,7 @@ class FramePrincipal(Frame):
         self.frameClientesCommands.pack(side=BOTTOM, fill=X, expand=True, padx=50)
         
         self.btnDeleteCliente = Button(self.frameClientesCommands, bg=self._menuColor, borderwidth=1)
-        self.btnDeleteCliente["text"] = "Remover"
+        self.btnDeleteCliente["text"] = "Inativar"
         self.btnDeleteCliente["command"] = self.btnInativaPessoaClick
         self.btnDeleteCliente["font"] = self._fontButton
         self.btnDeleteCliente.pack(side=RIGHT, ipady=5, ipadx=10)
@@ -187,7 +187,76 @@ class FramePrincipal(Frame):
         self.btnAddCliente = Button(self.frameClientesCommands, bg=self._menuColor, borderwidth=1)
         self.btnAddCliente["text"] = "Adicionar"
         self.btnAddCliente["font"] = self._fontButton
+        self.btnAddCliente["command"] = self.btnAddClienteClick
         self.btnAddCliente.pack(side=RIGHT, ipady=5, ipadx=10)
+
+    def addClienteFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblClientes = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblClientes["text"] = "Adicionar Cliente"
+        self.lblClientes["font"] = self._fontSubtitle
+        self.lblClientes.pack(side=TOP, ipady=20, ipadx=40)
+
+
+        self.frameDigName = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigName.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigName = Label(self.frameDigName, bg=self._backgroundColor)
+        self.lblDigName["text"] = "Nome"
+        self.lblDigName["font"] = self._fontText
+        self.lblDigName.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryName = Entry(self.frameDigName, bg=self._backgroundColor)
+        self.entryName.pack(side=TOP, fill=X, padx=15, pady=5)
+
+        self.frameDigEmail = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigEmail.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigEmail = Label(self.frameDigEmail, bg=self._backgroundColor)
+        self.lblDigEmail["text"] = "e-Mail"
+        self.lblDigEmail["font"] = self._fontText
+        self.lblDigEmail.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryMail = Entry(self.frameDigEmail, bg=self._backgroundColor)
+        self.entryMail.pack(side=TOP, fill=X, padx=15, pady=5)
+        
+        self.frameDigFone = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigFone.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigFone = Label(self.frameDigFone, bg=self._backgroundColor)
+        self.lblDigFone["text"] = "Telefone"
+        self.lblDigFone["font"] = self._fontText
+        self.lblDigFone.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryFone = Entry(self.frameDigFone, bg=self._backgroundColor)
+        self.entryFone.pack(side=TOP, fill=X, padx=15, pady=5)
+
+
+        self.frameDigEndereco = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigEndereco.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigEndereco = Label(self.frameDigEndereco, bg=self._backgroundColor)
+        self.lblDigEndereco["text"] = "Endereço"
+        self.lblDigEndereco["font"] = self._fontText
+        self.lblDigEndereco.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryEndereco = Entry(self.frameDigEndereco, bg=self._backgroundColor)
+        self.entryEndereco.pack(side=TOP, fill=X, padx=15, pady=5,)
+
+        self.btnAddCliente = Button(self.frameMain, bg=self._menuColor, borderwidth=1)
+        self.btnAddCliente["text"] = "Adicionar"
+        self.btnAddCliente["font"] = self._fontButton
+        #self.btnAddCliente["command"] = self.btnAddClienteClick
+        self.btnAddCliente.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
+
+
 
     def produtosFrame(self):
         self.frameMain.destroy()
@@ -430,6 +499,9 @@ class FramePrincipal(Frame):
     def btnUpdateClienteClick(self):
         cod = self.getSelectedPessoa()
         print("Id: " + str(cod))
+
+    def btnAddClienteClick(self):
+        self.addClienteFrame()
 
     def getSelectedPessoa(self):
         pos = self.listClientes.curselection()
