@@ -126,6 +126,9 @@ class FramePrincipal(Frame):
     def btnProdutosClick(self):
         self.produtosFrame()
 
+    def btnAddProdutoClick(self):
+        self.addProdutoFrame()    
+
     def btnImportaClick(self):
         self.importaFrame()
 
@@ -257,6 +260,72 @@ class FramePrincipal(Frame):
         self.btnAddCliente["command"] = self.btnAddClienteBancoClick
         self.btnAddCliente.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
 
+    def addProdutoFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblProdutos = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblProdutos["text"] = "Adicionar Produto"
+        self.lblProdutos["font"] = self._fontSubtitle
+        self.lblProdutos.pack(side=TOP, ipady=20, ipadx=40)
+
+
+        self.frameDigNameProd = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigNameProd.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigNameProd = Label(self.frameDigNameProd, bg=self._backgroundColor)
+        self.lblDigNameProd["text"] = "Nome"
+        self.lblDigNameProd["font"] = self._fontText
+        self.lblDigNameProd.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryNameProd = Entry(self.frameDigNameProd, bg=self._backgroundColor,width=50)
+        self.entryNameProd.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.frameDigDescricao = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigDescricao.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigDescricao = Label(self.frameDigDescricao, bg=self._backgroundColor)
+        self.lblDigDescricao["text"] = "Descrição"
+        self.lblDigDescricao["font"] = self._fontText
+        self.lblDigDescricao.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryDescricao = Entry(self.frameDigDescricao, bg=self._backgroundColor,width=50)
+        self.entryDescricao.pack(side=TOP, anchor=W, padx=15, pady=5)
+        
+        self.frameDigQuant = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigQuant.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigQuant = Label(self.frameDigQuant, bg=self._backgroundColor)
+        self.lblDigQuant["text"] = "Quantidade"
+        self.lblDigQuant["font"] = self._fontText
+        self.lblDigQuant.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryQuant = Entry(self.frameDigQuant, bg=self._backgroundColor,width=50)
+        self.entryQuant.pack(side=TOP, anchor =W, padx=15, pady=5)
+
+
+        self.frameDigPreco = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameDigPreco.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblDigPreco = Label(self.frameDigPreco, bg=self._backgroundColor)
+        self.lblDigPreco["text"] = "Preço"
+        self.lblDigPreco["font"] = self._fontText
+        self.lblDigPreco.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryPreco = Entry(self.frameDigPreco, bg=self._backgroundColor,width=50)
+        self.entryPreco.pack(side=TOP, anchor = W, padx=15, pady=5,)
+
+        self.btnAddProduto = Button(self.frameMain, bg=self._menuColor, borderwidth=1)
+        self.btnAddProduto["text"] = "Adicionar"
+        self.btnAddProduto["font"] = self._fontButton
+        self.btnAddProduto["command"] = self.btnAddProdutoBancoClick
+        self.btnAddProduto.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
+
     def produtosFrame(self):
         self.frameMain.destroy()
 
@@ -305,6 +374,7 @@ class FramePrincipal(Frame):
         self.btnAddProduto = Button(self.frameProdutosCommands, bg=self._menuColor, borderwidth=1)
         self.btnAddProduto["text"] = "Adicionar"
         self.btnAddProduto["font"] = self._fontButton
+        self.btnAddProduto["command"] = self.btnAddProdutoClick
         self.btnAddProduto.pack(side=RIGHT, ipady=5, ipadx=10)
    
     def importaFrame(self):
@@ -321,21 +391,48 @@ class FramePrincipal(Frame):
         self.lblimporta["font"] = self._fontSubtitle
         self.lblimporta.pack(side=TOP, ipady=20, ipadx=40)
 
-        self.lblimporta = Frame(self.frameMain, bg=self._backgroundColor)
-        self.lblimporta.pack(anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
+        self.frameImpUrl = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameImpUrl.pack(anchor=N, fill=BOTH, padx=60, ipadx=60, pady=35)
 
-        #importados = {}
-        importados = []
-        trasferencia = connect.importaDados()
-        print(trasferencia)
-        # for row in trasferencia:
-        #     #i = 0
-        #     importados.append({"id": row[0], "nome": row[1], "email": row[2], "senha": row[3], "telefone": row[4], "endereco": row[5]})        
-        #     #importados["pessoa%d" %i] = {"id": row[0], "nome": row[1], "email": row[2], "senha": row[3], "telefone": row[4], "endereco": row[5]}
-        #     # i = i +1
-        # f = open("C:/Users/Elisa Yoko/Desktop/output.json","w")
-        # json.dump(importados,f,sort_keys=True,indent=4)
-        # f.close()
+        self.lblImpUrl = Label(self.frameImpUrl, bg=self._backgroundColor)
+        self.lblImpUrl["text"] = "Endereço dos dados"
+        self.lblImpUrl["font"] = self._fontText
+        self.lblImpUrl.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryImpUrl = Entry(self.frameImpUrl, bg=self._backgroundColor)
+        self.entryImpUrl.pack(side=TOP, fill=X, padx=15, pady=5)
+
+        self.frameImportar = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameImportar.pack(side=TOP, fill=Y, anchor=W, ipadx=60, padx=60)
+
+        self.lblImpTudo = Label(self.frameImportar, bg=self._backgroundColor)
+        self.lblImpTudo["text"] = "Exportar dados"
+        self.lblImpTudo["font"] = self._fontText
+        self.lblImpTudo["justify"] = LEFT
+        self.lblImpTudo.pack(side=TOP, anchor=W, pady=5)
+
+        self.lblImportarTudo = Label(self.frameImportar, bg=self._backgroundColor)
+        self.lblImportarTudo["justify"] = LEFT
+        self.lblImportarTudo["text"] = "Exporta os dados armazenados no sistema em um arquivo no formato JSON, que pode possui o conteúdo das tabelas \nPessoa, Produto, Pedido ou ItemPedido, além de possibilitar a exportação de todos os dados."
+        self.lblImportarTudo.pack(side=TOP, fill=Y, anchor=W, ipadx=10)
+
+        self.frameImpTypes = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameImpTypes.pack(side=TOP, fill=Y, anchor=N, ipadx=60, padx=60, pady=10)
+
+        impTypes = ["Tudo", "Pessoas", "Produtos", "Pedidos", "ItensPedidos"]
+        self.impTypeVar = StringVar()
+        for item in impTypes:
+            rdb = Radiobutton(self.frameImpTypes, bg=self._backgroundColor)
+            rdb["text"] = item
+            rdb["variable"] = self.impTypeVar
+            rdb["value"] = item
+            rdb.pack(side=LEFT, anchor=N, ipadx=8)
+        self.impTypeVar.set("Tudo")
+
+        self.btnImportarDados = Button(self.frameMain, bg=self._backgroundColor)
+        self.btnImportarDados["text"] = "Importar"
+        self.btnImportarDados["command"] = self.btnImportarDadosClick
+        self.btnImportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60)
 
     def exportarFrame(self):
         self.frameMain.destroy()
@@ -473,6 +570,7 @@ class FramePrincipal(Frame):
         cod = self.getSelectedProduto()
         connect.inativaProduto(cod)
         self.carregaProdutos()
+    
 
     def btnInativaPessoaClick(self):
         cod = self.getSelectedPessoa()
@@ -495,6 +593,19 @@ class FramePrincipal(Frame):
         elif (self.expTypeVar.get() == "ItensPedidos"):
             importExport.exportarItens(self.entryExpName.get(), self.entryExpPath.get())
 
+    def btnImportarDadosClick(self):
+        if (self.impTypeVar.get() == "Tudo"):
+            importExport.importarBanco(self.entryImpUrl.get())
+        elif (self.impTypeVar.get() == "Pessoas"):
+            importExport.importarPessoas(self.entryImpUrl.get())
+        elif (self.impTypeVar.get() == "Produtos"):
+            importExport.importarProdutos(self.entryImpUrl.get())
+        elif (self.impTypeVar.get() == "Pedidos"):
+            importExport.importarPedidos(self.entryImpUrl.get())
+        elif (self.impTypeVar.get() == "ItensPedidos"):
+            importExport.importarItensPedidos(self.entryImpUrl.get())
+
+
     def btnUpdateClienteClick(self):
         cod = self.getSelectedPessoa()
         print("Id: " + str(cod))
@@ -511,7 +622,14 @@ class FramePrincipal(Frame):
         connect.insertPessoa(pessoa)
         self.clientesFrame()
 
-        
+    def btnAddProdutoBancoClick(self):
+        produto = models.Produto()
+        produto.nome = self.entryNameProd.get()
+        produto.descricao = self.entryDescricao.get()
+        produto.quantidade = self.entryQuant.get()
+        produto.preco = self.entryPreco.get()
+        connect.insertProduto(produto)
+        self.produtosFrame()       
     
     def getSelectedPessoa(self):
         pos = self.listClientes.curselection()

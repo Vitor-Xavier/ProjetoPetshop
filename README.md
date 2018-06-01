@@ -22,9 +22,9 @@ desenvolvedores: {nome completo e código de matrícula}.
 - [X] Implementar uma funcionalidade que exporta todos os dados da aplicação no formato
 JSON. O arquivo deve ser compactado no formato zip.
 - [ ] Implementar uma funcionalidade para importa dados.
-    - [ ] Os dados devem ser disponibilizados em um endereço da web.
-    - [ ] Usar o módulo Requests ou URLlib.
-    - [ ] Armazenar os dados importados em uma tabela.
+    - [X] Os dados devem ser disponibilizados em um endereço da web.
+    - [X] Usar o módulo Requests ou URLlib.
+    - [X] Armazenar os dados importados em uma tabela.
     - [ ] Apresentar os dados importados em uma UI da aplicação.
     
 ## Membros

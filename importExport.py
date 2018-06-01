@@ -2,6 +2,7 @@ import simplejson as json
 import zipfile as zip
 import os
 import connect
+import models
 import requests
 
 def exportarBanco(filename, path):
@@ -21,7 +22,6 @@ def exportarBanco(filename, path):
         return True
     except Exception:
         return False
-    
 
 def exportarPessoas(filename, path):
     filename += ".json"
@@ -85,9 +85,66 @@ def compactarArquivo(filename, path):
     zf.close()
     os.remove(os.path.join(os.sep, path, filename))
 
-def importarPessoas(file_url):
-    pessoas = requests.get(url=file_url)
-    for pessoa in pessoas.json():
-        print(pessoa)
 
-importarPessoas("https://raw.githubusercontent.com/Vitor-Xavier/JsonTst/master/pessoas_1.json")
+def importarBanco(file_url):
+    banco = requests.get(url=file_url)
+    carregarPessoas(banco.json()["Pessoas"])
+    carregarProdutos(banco.json()["Produtos"])
+    carregarPedidos(banco.json()["Pedidos"])
+    carregarItensPedidos(banco.json()["ItensPedido"])
+
+def importarPessoas(file_url):
+    dados = requests.get(url=file_url)
+    carregarPessoas(dados)
+
+def importarProdutos(file_url):
+    dados = requests.get(url=file_url)
+    carregarProdutos(dados)
+
+def importarPedidos(file_url):
+    dados = requests.get(url=file_url)
+    carregarPedidos(dados)
+
+def importarItensPedidos(file_url):
+    dados = requests.get(url=file_url)
+    carregarItensPedidos(dados)
+
+def carregarPessoas(pessoas):
+    for pessoa in pessoas:
+        p = models.Pessoa()
+        p.pessoa_id = pessoa["pessoa_id"]
+        p.nome = pessoa["nome"]
+        p.email = pessoa["email"]
+        p.senha = pessoa["senha"]
+        p.telefone = pessoa["telefone"]
+        connect.insertPessoa(p)
+
+def carregarProdutos(produtos):
+    for produto in produtos:
+        p = models.Produto()
+        p.produto_id = produto["produto_id"]
+        p.nome = produto["nome"]
+        p.quantidade = produto["quantidade"]
+        p.preco = produto["preco"]
+        p.descricao = produto["descricao"]
+        connect.insertProduto(p)
+
+def carregarPedidos(pedidos):
+    for pedido in pedidos:
+        p = models.Pedido()
+        p.pedido_id = pedido["pedido_id"]
+        p.cliente_id = pedido["cliente_id"]
+        p.usuario_id = pedido["usuario_id"]
+        p.data_pedido = pedido["data_pedido"]
+        connect.insertPedido(p)
+
+def carregarItensPedidos(itens):
+    for item in itens:
+        it = models.ItemPedido()
+        it.pedido_id = item["pedido_id"]
+        it.produto_id = item["produto_id"]
+        it.quantidade = item["quantidade"]
+        it.preco_unitario = item["preco_unitario"]
+        connect.insertItemPedido(it)
+
+# https://raw.githubusercontent.com/Vitor-Xavier/JsonTst/master/banco.json
