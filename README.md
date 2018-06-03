@@ -13,7 +13,7 @@ Petshop
     - [X] Pelo menos três tabelas.
     - [X] No mínimo três operações para cada, dentre elas: Insert, Update, Delete e/ou Select.
 Elaborar, necessariamente, as seguintes UI:
-- [ ] Login: em que o usuário deverá fornecer um nome de usuário e uma senha. O acesso
+- [X] Login: em que o usuário deverá fornecer um nome de usuário e uma senha. O acesso
 as funcionalidades do sistema ocorrem apenas para usuários previamente
 cadastrados.
 - [X] Sobre: que apresente dados do projeto {tema escolhido e objetivo} e dos

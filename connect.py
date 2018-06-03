@@ -36,10 +36,22 @@ def selectPessoas(status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT pessoa_id,nome, email,telefone,endereco FROM pessoa"
+    sql = "SELECT pessoa_id, nome, email, telefone, endereco FROM pessoa"
     sql += " WHERE status = TRUE" if status else ""
     cursor.execute(sql)
     result = cursor.fetchall()
+    finalize()
+    return result
+
+def selectPessoa(pessoaId, status=True):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT pessoa_id, nome, email, telefone, endereco FROM pessoa WHERE pessoa_id = %s"
+    sql += " status = TRUE" if status else ""
+    sql_values = cursor.mogrify(sql (pessoaId, ))
+    cursor.execute(sql_values)
+    result = cursor.fetchone()
     finalize()
     return result
 
@@ -68,8 +80,20 @@ def selectProdutos(status=True):
     global cursor
     initialize()
     sql = "SELECT * FROM produto" 
-    sql += " WHERE status = TRUE" if status else ""
+    sql += " AND status = TRUE" if status else ""
     cursor.execute(sql)
+    result = cursor.fetchall()
+    finalize()
+    return result
+
+def selectProduto(produtoId, status=True):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT * FROM produto WHERE produto_id = %s" 
+    sql += " AND status = TRUE" if status else ""
+    sql_values = cursor.mogrify(sql (produtoId, ))
+    cursor.execute(sql_values)
     result = cursor.fetchall()
     finalize()
     return result
@@ -166,7 +190,21 @@ def importaDados():
     result = cursor.fetchall()
     finalize()
     return result
-    
+
+def login(email, senha):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT email, senha FROM pessoa WHERE email = %s"
+    sql_values = cursor.mogrify(sql, (email, ))
+    cursor.execute(sql_values)
+    result = cursor.fetchone()
+    finalize()
+    if (result != None and result[1] == senha):
+        return True
+    else:
+        return False
+
 p = models.Pessoa()
 p.nome = "Usuário 1"
 p.email = "usuario@mail.com"
@@ -175,4 +213,5 @@ p.telefone = "1234567890"
 p.endereco = "Rua 1"
 
 #insertPessoa(p)
-selectPessoas()
+#selectPessoas()
+login("usuario@mail.com", "123")

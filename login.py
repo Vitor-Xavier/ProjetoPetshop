@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox as mbox
 import PetShop
+import connect
 
 class FramePrincipal(Frame):
 
@@ -40,30 +41,30 @@ class FramePrincipal(Frame):
         self.entryUsuario.focus_set()
 
         # Frame Senha
-        self.frame3 = Frame(bg=PetShop.FramePrincipal._backgroundColor, height=40)
-        self.frame3.pack(fill=X)
+        self.frameSenha = Frame(bg=PetShop.FramePrincipal._backgroundColor, height=40)
+        self.frameSenha.pack(fill=X)
 
-        self.lblSenha = Label(self.frame3)
+        self.lblSenha = Label(self.frameSenha)
         self.lblSenha["text"] = "Senha: "
         self.lblSenha["bg"] = PetShop.FramePrincipal._backgroundColor
         self.lblSenha.pack(side=LEFT, ipady=10, ipadx=10)
 
-        self.entrySenha = Entry(self.frame3, width=22)
+        self.entrySenha = Entry(self.frameSenha, width=22)
         self.entrySenha["bg"] = PetShop.FramePrincipal._backgroundColor
         self.entrySenha["show"] = "*"
         self.entrySenha.pack(side=LEFT)
 
         # Frame Botões
-        self.frame4 = Frame(bg=PetShop.FramePrincipal._backgroundColor, height=40)
-        self.frame4.pack(fill=X)
+        self.frameButtons = Frame(bg=PetShop.FramePrincipal._backgroundColor, height=40)
+        self.frameButtons.pack(fill=X)
 
-        self.btnLogin = Button(self.frame4, width=10)
+        self.btnLogin = Button(self.frameButtons, width=10)
         self.btnLogin["text"] = "Entrar"
         self.btnLogin["bg"] = PetShop.FramePrincipal._backgroundColor
         self.btnLogin["command"] = self.btnLoginClick 
         self.btnLogin.pack(side=RIGHT, padx=15, pady=1)
 
-        self.btnClear = Button(self.frame4, width=10)
+        self.btnClear = Button(self.frameButtons, width=10)
         self.btnClear["text"] = "Limpar"
         self.btnClear["bg"] = PetShop.FramePrincipal._backgroundColor
         self.btnClear["command"] = self.btnClearClick 
@@ -74,14 +75,30 @@ class FramePrincipal(Frame):
         self.entrySenha.focus_set()
 
     def btnLoginClick(self):
+        if (len(self.entryUsuario.get()) == 0):
+            self.exibirMensagem("Preencha o campo email")
+            return
+        if (len(self.entrySenha.get()) == 0):
+            self.exibirMensagem("Preencha o campo senha")
+            return
+        email = self.entryUsuario.get()
+        senha = self.entrySenha.get()
+        connect.login(email, senha)
+        if (connect.login(email, senha)):
+            self.destroyFrame()
+            PetShop.main()
+        else:
+            self.exibirMensagem("Login incorreto.")
+
+    def destroyFrame(self):
         self.frameTitle.destroy()
         self.frameUser.destroy()
-        self.frame3.destroy()
-        self.frame4.destroy()
-        PetShop.main()
+        self.frameSenha.destroy()
+        self.frameButtons.destroy()
 
     def btnClearClick(self):
-        self.entrySenha[""]
+        self.entryUsuario.delete(0, 'end')
+        self.entrySenha.delete(0, 'end')
 
     def exibirMensagem(self, msg):
         mbox.showinfo("Pet Shop", msg) 

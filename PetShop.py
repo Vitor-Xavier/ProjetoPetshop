@@ -5,6 +5,7 @@ import importExport
 from tkinter import *
 import json
 import os
+import tkinter
 
 class FramePrincipal(Frame):
     _title = "Pet Shop"
@@ -49,6 +50,8 @@ class FramePrincipal(Frame):
         self.lblTitle["text"] = title
         self.lblTitle.pack(side=LEFT, ipady=20, ipadx=40)
    
+
+
     #Menus Principais Laterais
     def addMenu(self):
         self.frameMenu = Frame(bg=self._menuColor)
@@ -172,6 +175,24 @@ class FramePrincipal(Frame):
         self.listClientes.pack(side=LEFT, fill=BOTH, expand=True)
         scrollY["command"] = self.listClientes.yview
         scrollY.pack(side=LEFT, fill=Y)
+
+
+
+        self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameExpTypes.pack(side=LEFT, anchor=N, ipadx=5, padx=45, pady=10)
+
+        expPessoa = ["Ativos", "Inativos"]
+        self.expPessoaVar = StringVar()
+        for item in expPessoa:
+            rdb = Radiobutton(self.frameExpTypes, bg=self._backgroundColor)
+            rdb["text"] = item
+            rdb["variable"] = self.expPessoaVar
+            rdb["value"] = item
+            rdb.pack(side=LEFT, anchor=N, ipadx=8)
+        self.expPessoaVar.set("Ativos")
+
+
+
 
         self.frameClientesCommands = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameClientesCommands.pack(side=BOTTOM, fill=X, expand=True, padx=50)
@@ -606,9 +627,15 @@ class FramePrincipal(Frame):
             importExport.importarItensPedidos(self.entryImpUrl.get())
 
 
+    # def btnUpdateClienteClick(self):
+    #     cod = self.getSelectedPessoa()
+    #     print("Id: " + str(cod))
+
+
     def btnUpdateClienteClick(self):
-        cod = self.getSelectedPessoa()
-        print("Id: " + str(cod))
+        if(self.expPessoaVar.get() == "Inativos"):
+            cod = self.getSelectedPessoa()
+            print("Id: " + str(cod))
 
     def btnAddClienteClick(self):
         self.addClienteFrame()
@@ -656,6 +683,8 @@ class FramePrincipal(Frame):
             self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
 
 
+def main():
+    app = FramePrincipal()
+    app.mainloop()
 
-app = FramePrincipal()
-app.mainloop()
+main()
