@@ -1,4 +1,5 @@
 class Pessoa(object):
+    pessoa_id = 0
     nome = ""
     email = ""
     senha = ""

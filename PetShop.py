@@ -18,7 +18,9 @@ class FramePrincipal(Frame):
     _backgroundColor = "#FFFFFF"
     _barColor = "#009688"
     _menuColor = "#f7f7f7"
+    _buttonHoverColor = "#e0e0e0"
     _primaryTextColor = "#FFFFFF"
+    _bodyTextColor = "#323232"
     _secondaryTextColor = "#CCFFFFFF"
 
     #Inicializando o Menu Principal
@@ -61,59 +63,78 @@ class FramePrincipal(Frame):
         self.btnUsuarios = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnUsuarios["text"] = "Clientes"
         self.btnUsuarios["font"] = self._fontButton
+        self.btnUsuarios["fg"] = self._bodyTextColor
         self.btnUsuarios["command"] = self.btnUsuariosClick
+        self.btnUsuarios.bind("<Enter>", self.on_enter)
+        self.btnUsuarios.bind("<Leave>", self.on_leave)
         self.btnUsuarios.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Produtos
         self.btnProdutos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnProdutos["text"] = "Produtos"
         self.btnProdutos["font"] = self._fontButton
+        self.btnProdutos["fg"] = self._bodyTextColor
         self.btnProdutos["command"] = self.btnProdutosClick
+        self.btnProdutos.bind("<Enter>", self.on_enter)
+        self.btnProdutos.bind("<Leave>", self.on_leave)
         self.btnProdutos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Pedidos
         self.btnPedidos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnPedidos["text"] = "Pedidos"
         self.btnPedidos["font"] = self._fontButton
+        self.btnPedidos["fg"] = self._bodyTextColor
+        self.btnPedidos.bind("<Enter>", self.on_enter)
+        self.btnPedidos.bind("<Leave>", self.on_leave)
         self.btnPedidos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Importar
         self.btnImportar = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
         self.btnImportar["text"] = "Importar dados"
         self.btnImportar["font"] = self._fontButton
+        self.btnImportar["fg"] = self._bodyTextColor
         self.btnImportar["command"] = self.btnImportaClick
+        self.btnImportar.bind("<Enter>", self.on_enter)
+        self.btnImportar.bind("<Leave>", self.on_leave)
         self.btnImportar.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Exportar
         self.btnExportar = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
         self.btnExportar["text"] = "Exportar dados"
         self.btnExportar["font"] = self._fontButton
+        self.btnExportar["fg"] = self._bodyTextColor
         self.btnExportar["command"] = self.btnExportarClick
+        self.btnExportar.bind("<Enter>", self.on_enter)
+        self.btnExportar.bind("<Leave>", self.on_leave)
         self.btnExportar.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Sobre
         self.btnSobre = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
         self.btnSobre["text"] = "Sobre" 
         self.btnSobre["font"] = self._fontButton
+        self.btnSobre["fg"] = self._bodyTextColor
         self.btnSobre["command"] = self.btnSobreClick
+        self.btnSobre.bind("<Enter>", self.on_enter)
+        self.btnSobre.bind("<Leave>", self.on_leave)
         self.btnSobre.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Sair
         self.btnSair = Button(self.frameMenu, bg=self._menuColor, borderwidth=0)
         self.btnSair["text"] = "Sair"
+        self.btnSair["font"] = self._fontButton
+        self.btnSair["fg"] = self._bodyTextColor
+        self.btnSair["command"] = self.btnSairClick
         self.btnSair.bind("<Enter>", self.on_enter)
         self.btnSair.bind("<Leave>", self.on_leave)
-        self.btnSair["font"] = self._fontButton
-        self.btnSair["command"] = self.btnSairClick
         self.btnSair.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
 
     #----Animação Botão Sair
-    def on_enter(self, e):
-        self.btnSair['background'] = 'red'
+    def on_enter(self, event):
+        event.widget['background'] = self._buttonHoverColor
 
-    def on_leave(self, e):
-        self.btnSair['background'] = 'SystemButtonFace'
+    def on_leave(self, event):
+        event.widget['background'] = self._menuColor
 
 
     #Tela lateral dos Menus principais
@@ -201,21 +222,39 @@ class FramePrincipal(Frame):
         self.btnDeleteCliente["text"] = "Inativar"
         self.btnDeleteCliente["command"] = self.btnInativaPessoaClick
         self.btnDeleteCliente["font"] = self._fontButton
-        self.btnDeleteCliente.pack(side=RIGHT, ipady=5, ipadx=10)
+        self.btnDeleteCliente["fg"] = self._bodyTextColor
+        self.btnDeleteCliente.bind("<Enter>", self.on_enter)
+        self.btnDeleteCliente.bind("<Leave>", self.on_leave)
+        self.btnDeleteCliente.pack(side=RIGHT, ipady=5, ipadx=15)
+
+        self.btnRefreshCliente = Button(self.frameClientesCommands, bg=self._menuColor, borderwidth=1)
+        self.btnRefreshCliente["text"] = "Atualizar"
+        self.btnRefreshCliente["font"] = self._fontButton
+        self.btnRefreshCliente["fg"] = self._bodyTextColor
+        self.btnRefreshCliente["command"] = self.btnRefreshClienteClick
+        self.btnRefreshCliente.bind("<Enter>", self.on_enter)
+        self.btnRefreshCliente.bind("<Leave>", self.on_leave)
+        self.btnRefreshCliente.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
 
         self.btnUpdateCliente = Button(self.frameClientesCommands, bg=self._menuColor, borderwidth=1)
-        self.btnUpdateCliente["text"] = "Atualizar"
+        self.btnUpdateCliente["text"] = "Alterar"
         self.btnUpdateCliente["font"] = self._fontButton
+        self.btnUpdateCliente["fg"] = self._bodyTextColor
         self.btnUpdateCliente["command"] = self.btnUpdateClienteClick
+        self.btnUpdateCliente.bind("<Enter>", self.on_enter)
+        self.btnUpdateCliente.bind("<Leave>", self.on_leave)
         self.btnUpdateCliente.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
 
         self.btnAddCliente = Button(self.frameClientesCommands, bg=self._menuColor, borderwidth=1)
         self.btnAddCliente["text"] = "Adicionar"
         self.btnAddCliente["font"] = self._fontButton
+        self.btnAddCliente["fg"] = self._bodyTextColor
         self.btnAddCliente["command"] = self.btnAddClienteClick
-        self.btnAddCliente.pack(side=RIGHT, ipady=5, ipadx=10)
+        self.btnAddCliente.bind("<Enter>", self.on_enter)
+        self.btnAddCliente.bind("<Leave>", self.on_leave)
+        self.btnAddCliente.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
 
-    def addClienteFrame(self):
+    def addClienteFrame(self, cliente=None):
         self.frameMain.destroy()
 
         self.frameMain = Frame(bg=self._backgroundColor)
@@ -229,6 +268,17 @@ class FramePrincipal(Frame):
         self.lblClientes["font"] = self._fontSubtitle
         self.lblClientes.pack(side=TOP, ipady=20, ipadx=40)
 
+        if cliente != None:
+            self.frameClienteId = Frame(self.frameMain, bg=self._backgroundColor)
+            self.frameClienteId.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+            self.lblClienteId = Label(self.frameClienteId, bg=self._backgroundColor)
+            self.lblClienteId["text"] = "Código"
+            self.lblClienteId["font"] = self._fontText
+            self.lblClienteId.pack(side=TOP, fill=Y, anchor=W)
+
+            self.entryClienteId = Entry(self.frameClienteId, bg=self._backgroundColor,width=50)
+            self.entryClienteId.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigName = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameDigName.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
@@ -276,12 +326,23 @@ class FramePrincipal(Frame):
         self.entryEndereco.pack(side=TOP, anchor = W, padx=15, pady=5,)
 
         self.btnAddCliente = Button(self.frameMain, bg=self._menuColor, borderwidth=1)
-        self.btnAddCliente["text"] = "Adicionar"
+        self.btnAddCliente["text"] = "Salvar"
         self.btnAddCliente["font"] = self._fontButton
+        self.btnAddCliente["fg"] = self._bodyTextColor
         self.btnAddCliente["command"] = self.btnAddClienteBancoClick
+        self.btnAddCliente.bind("<Enter>", self.on_enter)
+        self.btnAddCliente.bind("<Leave>", self.on_leave)
         self.btnAddCliente.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
 
-    def addProdutoFrame(self):
+        if cliente != None:
+            self.entryClienteId.insert(0, cliente[0])
+            self.entryClienteId.configure(state='readonly')
+            self.entryName.insert(0, cliente[1])
+            self.entryMail.insert(0, cliente[2])
+            self.entryFone.insert(0, cliente[3])
+            self.entryEndereco.insert(0, cliente[4])
+
+    def addProdutoFrame(self, produto=None):
         self.frameMain.destroy()
 
         self.frameMain = Frame(bg=self._backgroundColor)
@@ -295,6 +356,17 @@ class FramePrincipal(Frame):
         self.lblProdutos["font"] = self._fontSubtitle
         self.lblProdutos.pack(side=TOP, ipady=20, ipadx=40)
 
+        if produto != None:
+            self.frameProdId = Frame(self.frameMain, bg=self._backgroundColor)
+            self.frameProdId.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+            self.lblProdId = Label(self.frameProdId, bg=self._backgroundColor)
+            self.lblProdId["text"] = "Nome"
+            self.lblProdId["font"] = self._fontText
+            self.lblProdId.pack(side=TOP, fill=Y, anchor=W)
+
+            self.entryProdId = Entry(self.frameProdId, bg=self._backgroundColor, width=50)
+            self.entryProdId.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigNameProd = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameDigNameProd.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
@@ -329,7 +401,6 @@ class FramePrincipal(Frame):
         self.entryQuant = Entry(self.frameDigQuant, bg=self._backgroundColor,width=50)
         self.entryQuant.pack(side=TOP, anchor =W, padx=15, pady=5)
 
-
         self.frameDigPreco = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameDigPreco.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
 
@@ -342,10 +413,21 @@ class FramePrincipal(Frame):
         self.entryPreco.pack(side=TOP, anchor = W, padx=15, pady=5,)
 
         self.btnAddProduto = Button(self.frameMain, bg=self._menuColor, borderwidth=1)
-        self.btnAddProduto["text"] = "Adicionar"
+        self.btnAddProduto["text"] = "Salvar"
         self.btnAddProduto["font"] = self._fontButton
+        self.btnAddProduto["fg"] = self._bodyTextColor
         self.btnAddProduto["command"] = self.btnAddProdutoBancoClick
+        self.btnAddProduto.bind("<Enter>", self.on_enter)
+        self.btnAddProduto.bind("<Leave>", self.on_leave)
         self.btnAddProduto.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
+
+        if produto != None:
+            self.entryProdId.insert(0, produto[0])
+            self.entryNameProd.insert(0, produto[1])
+            self.entryDescricao.insert(0, produto[2])
+            self.entryQuant.insert(0, produto[3])
+            self.entryPreco.insert(0, produto[4])
+            self.entryProdId.configure(state='readonly')
 
     def produtosFrame(self):
         self.frameMain.destroy()
@@ -384,18 +466,27 @@ class FramePrincipal(Frame):
         self.btnDeleteProduto["text"] = "Remover"
         self.btnDeleteProduto["command"] = self.btnInativaProdutoClick
         self.btnDeleteProduto["font"] = self._fontButton
+        self.btnDeleteProduto["fg"] = self._bodyTextColor
+        self.btnDeleteProduto.bind("<Enter>", self.on_enter)
+        self.btnDeleteProduto.bind("<Leave>", self.on_leave)
         self.btnDeleteProduto.pack(side=RIGHT, ipady=5, ipadx=10)
 
         self.btnUpdateProduto = Button(self.frameProdutosCommands, bg=self._menuColor, borderwidth=1)
-        self.btnUpdateProduto["text"] = "Atualizar"
+        self.btnUpdateProduto["text"] = "Alterar"
         self.btnUpdateProduto["font"] = self._fontButton
-        #self.btnUpdateProduto["command"] = self.btnUpdateProdutoClick
+        self.btnUpdateProduto["fg"] = self._bodyTextColor
+        self.btnUpdateProduto["command"] = self.btnUpdateProdutoClick
+        self.btnUpdateProduto.bind("<Enter>", self.on_enter)
+        self.btnUpdateProduto.bind("<Leave>", self.on_leave)
         self.btnUpdateProduto.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
 
         self.btnAddProduto = Button(self.frameProdutosCommands, bg=self._menuColor, borderwidth=1)
         self.btnAddProduto["text"] = "Adicionar"
         self.btnAddProduto["font"] = self._fontButton
+        self.btnAddProduto["fg"] = self._bodyTextColor
         self.btnAddProduto["command"] = self.btnAddProdutoClick
+        self.btnAddProduto.bind("<Enter>", self.on_enter)
+        self.btnAddProduto.bind("<Leave>", self.on_leave)
         self.btnAddProduto.pack(side=RIGHT, ipady=5, ipadx=10)
    
     def importaFrame(self):
@@ -452,8 +543,12 @@ class FramePrincipal(Frame):
 
         self.btnImportarDados = Button(self.frameMain, bg=self._backgroundColor)
         self.btnImportarDados["text"] = "Importar"
+        self.btnImportarDados["font"] = self._fontButton
+        self.btnImportarDados["fg"] = self._bodyTextColor
         self.btnImportarDados["command"] = self.btnImportarDadosClick
-        self.btnImportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60)
+        self.btnImportarDados.bind("<Enter>", self.on_enter)
+        self.btnImportarDados.bind("<Leave>", self.on_leave)
+        self.btnImportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60, ipady=5, ipadx=15)
 
     def exportarFrame(self):
         self.frameMain.destroy()
@@ -523,8 +618,12 @@ class FramePrincipal(Frame):
 
         self.btnExportarDados = Button(self.frameMain, bg=self._backgroundColor)
         self.btnExportarDados["text"] = "Exportar"
+        self.btnExportarDados["font"] = self._fontButton
+        self.btnExportarDados["fg"] = self._bodyTextColor
         self.btnExportarDados["command"] = self.btnExportarDadosClick
-        self.btnExportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60)
+        self.btnExportarDados.bind("<Enter>", self.on_enter)
+        self.btnExportarDados.bind("<Leave>", self.on_leave)
+        self.btnExportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60, ipady=5, ipadx=15)
 
     def sobreFrame(self):
         self.frameMain.destroy()
@@ -591,7 +690,6 @@ class FramePrincipal(Frame):
         cod = self.getSelectedProduto()
         connect.inativaProduto(cod)
         self.carregaProdutos()
-    
 
     def btnInativaPessoaClick(self):
         cod = self.getSelectedPessoa()
@@ -631,8 +729,17 @@ class FramePrincipal(Frame):
     #     cod = self.getSelectedPessoa()
     #     print("Id: " + str(cod))
 
+    def btnUpdateProdutoClick(self):
+        cod = self.getSelectedProduto()
+        produto = connect.selectProduto(cod)
+        self.addProdutoFrame(produto)
 
     def btnUpdateClienteClick(self):
+        cod = self.getSelectedPessoa()
+        pessoa = connect.selectPessoa(cod)
+        self.addClienteFrame(pessoa)
+
+    def btnRefreshClienteClick(self):
         if(self.expPessoaVar.get() == "Inativos"):
             cod = self.getSelectedPessoa()
             print("Id: " + str(cod))
@@ -646,7 +753,12 @@ class FramePrincipal(Frame):
         pessoa.email = self.entryMail.get()
         pessoa.telefone = self.entryFone.get()
         pessoa.endereco = self.entryEndereco.get()
-        connect.insertPessoa(pessoa)
+
+        if (self.entryClienteId.winfo_exists()):
+            pessoa.pessoa_id = self.entryClienteId.get()
+            connect.updatePessoa(pessoa)
+        else:
+            connect.insertPessoa(pessoa)
         self.clientesFrame()
 
     def btnAddProdutoBancoClick(self):
@@ -655,7 +767,12 @@ class FramePrincipal(Frame):
         produto.descricao = self.entryDescricao.get()
         produto.quantidade = self.entryQuant.get()
         produto.preco = self.entryPreco.get()
-        connect.insertProduto(produto)
+
+        if (self.entryProdId.winfo_exists()):
+            produto.produto_id = self.entryProdId.get()
+            connect.updateProduto(produto)
+        else:
+            connect.insertProduto(produto)
         self.produtosFrame()       
     
     def getSelectedPessoa(self):
@@ -664,8 +781,8 @@ class FramePrincipal(Frame):
         return int(item[3:7])
 
     def getSelectedProduto(self):
-        pos = self.listClientes.curselection()
-        item = self.listClientes.get(pos)
+        pos = self.listProdutos.curselection()
+        item = self.listProdutos.get(pos)
         return int(item[3:7])
 
     # Atualiza listas
@@ -681,7 +798,6 @@ class FramePrincipal(Frame):
         self.listProdutos.delete(0, END)
         for item in produtos:
             self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
-
 
 def main():
     app = FramePrincipal()

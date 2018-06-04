@@ -32,6 +32,15 @@ def insertPessoa(pessoa):
     cursor.execute(sql_values)
     finalize()
 
+def updatePessoa(pessoa):
+    global conn
+    global cursor
+    initialize()
+    sql = "UPDATE pessoa SET nome = %s, email = %s, senha = %s, telefone = %s, endereco = %s WHERE pessoa_id = %s"
+    sql_values = cursor.mogrify(sql, (pessoa.nome, pessoa.email, pessoa.senha, pessoa.telefone, pessoa.endereco, pessoa.pessoa_id))
+    cursor.execute(sql_values)
+    finalize()
+
 def selectPessoas(status=True):
     global conn
     global cursor
@@ -48,8 +57,8 @@ def selectPessoa(pessoaId, status=True):
     global cursor
     initialize()
     sql = "SELECT pessoa_id, nome, email, telefone, endereco FROM pessoa WHERE pessoa_id = %s"
-    sql += " status = TRUE" if status else ""
-    sql_values = cursor.mogrify(sql (pessoaId, ))
+    sql += " AND status = TRUE" if status else ""
+    sql_values = cursor.mogrify(sql, (str(pessoaId), ))
     cursor.execute(sql_values)
     result = cursor.fetchone()
     finalize()
@@ -80,7 +89,7 @@ def selectProdutos(status=True):
     global cursor
     initialize()
     sql = "SELECT * FROM produto" 
-    sql += " AND status = TRUE" if status else ""
+    sql += " WHERE status = TRUE" if status else ""
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
@@ -92,11 +101,20 @@ def selectProduto(produtoId, status=True):
     initialize()
     sql = "SELECT * FROM produto WHERE produto_id = %s" 
     sql += " AND status = TRUE" if status else ""
-    sql_values = cursor.mogrify(sql (produtoId, ))
+    sql_values = cursor.mogrify(sql, (str(produtoId), ))
     cursor.execute(sql_values)
-    result = cursor.fetchall()
+    result = cursor.fetchone()
     finalize()
     return result
+
+def updateProduto(produto):
+    global conn
+    global cursor
+    initialize()
+    sql = "UPDATE produto SET nome = %s, descricao = %s, quantidade = %s, preco = %s WHERE produto_id = %s"
+    sql_values = cursor.mogrify(sql, (produto.nome, produto.descricao, produto.quantidade, produto.preco, produto.produto_id))
+    cursor.execute(sql_values)
+    finalize()
 
 def inativaProduto(produtoId):
     global conn
