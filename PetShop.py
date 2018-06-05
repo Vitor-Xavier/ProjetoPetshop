@@ -14,6 +14,7 @@ class FramePrincipal(Frame):
     _fontSubtitle = "SegoeUI 14"
     _fontText = "SegoeUI 12"
     _fontButton = "SegoeUI 10"
+    _fontBody = "SegoeUI 10"
     
     _backgroundColor = "#FFFFFF"
     _barColor = "#009688"
@@ -277,7 +278,8 @@ class FramePrincipal(Frame):
             self.lblClienteId["font"] = self._fontText
             self.lblClienteId.pack(side=TOP, fill=Y, anchor=W)
 
-            self.entryClienteId = Entry(self.frameClienteId, bg=self._backgroundColor,width=50)
+            self.entryClienteId = Entry(self.frameClienteId, bg=self._backgroundColor, width=50)
+            self.entryClienteId["font"] = self._fontBody
             self.entryClienteId.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigName = Frame(self.frameMain, bg=self._backgroundColor)
@@ -288,7 +290,8 @@ class FramePrincipal(Frame):
         self.lblDigName["font"] = self._fontText
         self.lblDigName.pack(side=TOP, fill=Y, anchor=W)
 
-        self.entryName = Entry(self.frameDigName, bg=self._backgroundColor,width=50)
+        self.entryName = Entry(self.frameDigName, bg=self._backgroundColor, width=50)
+        self.entryName["font"] = self._fontBody
         self.entryName.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigEmail = Frame(self.frameMain, bg=self._backgroundColor)
@@ -299,7 +302,8 @@ class FramePrincipal(Frame):
         self.lblDigEmail["font"] = self._fontText
         self.lblDigEmail.pack(side=TOP, fill=Y, anchor=W)
 
-        self.entryMail = Entry(self.frameDigEmail, bg=self._backgroundColor,width=50)
+        self.entryMail = Entry(self.frameDigEmail, bg=self._backgroundColor, width=50)
+        self.entryMail["font"] = self._fontBody
         self.entryMail.pack(side=TOP, anchor=W, padx=15, pady=5)
         
         self.frameDigFone = Frame(self.frameMain, bg=self._backgroundColor)
@@ -310,7 +314,8 @@ class FramePrincipal(Frame):
         self.lblDigFone["font"] = self._fontText
         self.lblDigFone.pack(side=TOP, fill=Y, anchor=W)
 
-        self.entryFone = Entry(self.frameDigFone, bg=self._backgroundColor,width=50)
+        self.entryFone = Entry(self.frameDigFone, bg=self._backgroundColor, width=50)
+        self.entryFone["font"] = self._fontBody
         self.entryFone.pack(side=TOP, anchor =W, padx=15, pady=5)
 
 
@@ -323,6 +328,7 @@ class FramePrincipal(Frame):
         self.lblDigEndereco.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryEndereco = Entry(self.frameDigEndereco, bg=self._backgroundColor,width=50)
+        self.entryEndereco["font"] = self._fontBody
         self.entryEndereco.pack(side=TOP, anchor = W, padx=15, pady=5,)
 
         self.btnAddCliente = Button(self.frameMain, bg=self._menuColor, borderwidth=1)
@@ -366,6 +372,7 @@ class FramePrincipal(Frame):
             self.lblProdId.pack(side=TOP, fill=Y, anchor=W)
 
             self.entryProdId = Entry(self.frameProdId, bg=self._backgroundColor, width=50)
+            self.entryProdId["font"] = self._fontBody
             self.entryProdId.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigNameProd = Frame(self.frameMain, bg=self._backgroundColor)
@@ -377,6 +384,7 @@ class FramePrincipal(Frame):
         self.lblDigNameProd.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryNameProd = Entry(self.frameDigNameProd, bg=self._backgroundColor,width=50)
+        self.entryNameProd["font"] = self._fontBody
         self.entryNameProd.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigDescricao = Frame(self.frameMain, bg=self._backgroundColor)
@@ -388,6 +396,7 @@ class FramePrincipal(Frame):
         self.lblDigDescricao.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryDescricao = Entry(self.frameDigDescricao, bg=self._backgroundColor,width=50)
+        self.entryDescricao["font"] = self._fontBody
         self.entryDescricao.pack(side=TOP, anchor=W, padx=15, pady=5)
         
         self.frameDigQuant = Frame(self.frameMain, bg=self._backgroundColor)
@@ -399,6 +408,7 @@ class FramePrincipal(Frame):
         self.lblDigQuant.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryQuant = Entry(self.frameDigQuant, bg=self._backgroundColor,width=50)
+        self.entryQuant["font"] = self._fontBody
         self.entryQuant.pack(side=TOP, anchor =W, padx=15, pady=5)
 
         self.frameDigPreco = Frame(self.frameMain, bg=self._backgroundColor)
@@ -410,6 +420,7 @@ class FramePrincipal(Frame):
         self.lblDigPreco.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryPreco = Entry(self.frameDigPreco, bg=self._backgroundColor,width=50)
+        self.entryPreco["font"] = self._fontBody
         self.entryPreco.pack(side=TOP, anchor = W, padx=15, pady=5,)
 
         self.btnAddProduto = Button(self.frameMain, bg=self._menuColor, borderwidth=1)
@@ -512,6 +523,7 @@ class FramePrincipal(Frame):
         self.lblImpUrl.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryImpUrl = Entry(self.frameImpUrl, bg=self._backgroundColor)
+        self.entryImpUrl["font"] = self._fontBody
         self.entryImpUrl.pack(side=TOP, fill=X, padx=15, pady=5)
 
         self.frameImportar = Frame(self.frameMain, bg=self._backgroundColor)
@@ -525,7 +537,8 @@ class FramePrincipal(Frame):
 
         self.lblImportarTudo = Label(self.frameImportar, bg=self._backgroundColor)
         self.lblImportarTudo["justify"] = LEFT
-        self.lblImportarTudo["text"] = "Exporta os dados armazenados no sistema em um arquivo no formato JSON, que pode possui o conteúdo das tabelas \nPessoa, Produto, Pedido ou ItemPedido, além de possibilitar a exportação de todos os dados."
+        self.lblImportarTudo["font"] = self._fontBody
+        self.lblImportarTudo["text"] = "Exporta os dados armazenados no sistema em um arquivo no formato JSON, que pode possui o conteúdo\ndas tabelas Pessoa, Produto, Pedido ou ItemPedido, além de possibilitar a exportação de todos os dados."
         self.lblImportarTudo.pack(side=TOP, fill=Y, anchor=W, ipadx=10)
 
         self.frameImpTypes = Frame(self.frameMain, bg=self._backgroundColor)
@@ -573,6 +586,7 @@ class FramePrincipal(Frame):
         self.lblExpName.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryExpName = Entry(self.frameExpName, bg=self._backgroundColor)
+        self.entryExpName["font"] = self._fontBody
         self.entryExpName.insert(0, "backup")
         self.entryExpName.pack(side=TOP, fill=X, padx=15, pady=5)
 
@@ -585,6 +599,7 @@ class FramePrincipal(Frame):
         self.lblExpPath.pack(side=TOP, fill=Y, anchor=W)
 
         self.entryExpPath = Entry(self.frameExpPath, bg=self._backgroundColor)
+        self.entryExpPath["font"] = self._fontBody
         self.entryExpPath.insert(0, os.path.join(os.sep, os.environ["SYSTEMDRIVE"], os.environ["HOMEPATH"], "Desktop"))
         self.entryExpPath.pack(side=TOP, fill=X, padx=15, pady=5)
 
@@ -599,7 +614,8 @@ class FramePrincipal(Frame):
 
         self.lblExportarTudo = Label(self.frameExportar, bg=self._backgroundColor)
         self.lblExportarTudo["justify"] = LEFT
-        self.lblExportarTudo["text"] = "Exporta os dados armazenados no sistema em um arquivo no formato JSON, que pode possui o conteúdo das tabelas \nPessoa, Produto, Pedido ou ItemPedido, além de possibilitar a exportação de todos os dados."
+        self.lblExportarTudo["font"] = self._fontBody
+        self.lblExportarTudo["text"] = "Exporta os dados armazenados no sistema em um arquivo no formato JSON, que pode possui o conteúdo\ndas tabelas Pessoa, Produto, Pedido ou ItemPedido, além de possibilitar a exportação de todos os dados."
         self.lblExportarTudo.pack(side=TOP, fill=Y, anchor=W, ipadx=10)
 
         self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
@@ -649,6 +665,7 @@ class FramePrincipal(Frame):
 
         self.lblTemaInfo = Label(self.frameTema, bg=self._backgroundColor)
         self.lblTemaInfo["justify"] = LEFT
+        self.lblTemaInfo["font"] = self._fontBody
         self.lblTemaInfo["text"] = "O tema escolhido pela dupla é o de Pet Shop."
         self.lblTemaInfo.pack(side=TOP, ipadx=10)
 
@@ -662,11 +679,12 @@ class FramePrincipal(Frame):
 
         self.lblAppInfo = Label(self.frameApp, bg=self._backgroundColor)
         self.lblAppInfo["justify"] = LEFT
-        self.lblAppInfo["text"] = "O prosósito da aplicação é auxiliar o controle e gerenciamento de um estabelecimento que possua o intuito de\n comercializar produtos como ração e acessórios para animais."
+        self.lblAppInfo["font"] = self._fontBody
+        self.lblAppInfo["text"] = "O prosósito da aplicação é auxiliar o controle e gerenciamento de um estabelecimento que possua o intuito de\ncomercializar produtos como ração e acessórios para animais."
         self.lblAppInfo.pack(side=TOP, ipadx=10)
 
         self.frameDevs = Frame(self.frameMain, bg=self._backgroundColor)
-        self.frameDevs.pack(side=TOP, fill=Y, expand=True, anchor=W, ipadx=60)
+        self.frameDevs.pack(side=TOP, fill=Y, anchor=W, ipadx=60)
 
         self.lblDevs = Label(self.frameDevs, bg=self._backgroundColor)
         self.lblDevs["text"] = "Desenvolvedores"
@@ -675,14 +693,30 @@ class FramePrincipal(Frame):
 
         self.lblDev1 = Label(self.frameDevs, bg=self._backgroundColor)
         self.lblDev1["justify"] = LEFT
+        self.lblDev1["font"] = self._fontBody
         self.lblDev1["text"] = "%-25s RA: %-14s" %("Fernando Marchetti", "2840481523011")
         self.lblDev1.pack(side=TOP, ipadx=10)
 
         self.lblDev2 = Label(self.frameDevs, bg=self._backgroundColor)
         self.lblDev2["justify"] = LEFT
+        self.lblDev2["font"] = self._fontBody
         self.lblDev2["text"] = "%-25s  RA: %-14s" %("Vitor Xavier de Souza", "2840481523039")
         self.lblDev2.pack(side=TOP, ipadx=10)
 
+        self.frameGit = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameGit.pack(side=TOP, fill=Y, expand=True, anchor=W, pady=35)
+
+        self.lblGit = Label(self.frameGit, bg=self._backgroundColor)
+        self.lblGit["text"] = "Repositório do projeto"
+        self.lblGit["font"] = self._fontText
+        self.lblGit.pack(side=TOP, anchor=W, ipadx=60, pady=5)
+
+        self.entryGit = Entry(self.frameGit, bg=self._backgroundColor, width=40, borderwidth=0)
+        self.entryGit["font"] = self._fontBody
+        self.entryGit["readonlybackground"] = self._backgroundColor
+        self.entryGit.insert(0, "https://github.com/Vitor-Xavier/ProjetoPetshop")
+        self.entryGit.configure(state='readonly')
+        self.entryGit.pack(side=TOP, fill=BOTH, anchor=W, ipadx=60, pady=5, padx=70)
 
     # Funcinalidades dentro dos Frames
     
@@ -740,9 +774,9 @@ class FramePrincipal(Frame):
         self.addClienteFrame(pessoa)
 
     def btnRefreshClienteClick(self):
-        if(self.expPessoaVar.get() == "Inativos"):
-            cod = self.getSelectedPessoa()
-            print("Id: " + str(cod))
+        self.carregaClientes((self.expPessoaVar.get() == "Ativos"))
+        # cod = self.getSelectedPessoa()
+        # print("Id: " + str(cod))
 
     def btnAddClienteClick(self):
         self.addClienteFrame()
@@ -787,14 +821,14 @@ class FramePrincipal(Frame):
 
     # Atualiza listas
 
-    def carregaClientes(self):
-        clientes = connect.selectPessoas()
+    def carregaClientes(self, onlyAtivos=True):
+        clientes = connect.selectPessoas(onlyAtivos)
         self.listClientes.delete(0, END)
         for item in clientes:
             self.listClientes.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Telefone: %-16s Endereco: %-40s" %(item[0], item[1], item[2], item[3], item[4]))
 
-    def carregaProdutos(self):
-        produtos = connect.selectProdutos()
+    def carregaProdutos(self, onlyAtivos=True):
+        produtos = connect.selectProdutos(onlyAtivos)
         self.listProdutos.delete(0, END)
         for item in produtos:
             self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
