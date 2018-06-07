@@ -85,6 +85,7 @@ class FramePrincipal(Frame):
         self.btnPedidos["text"] = "Pedidos"
         self.btnPedidos["font"] = self._fontButton
         self.btnPedidos["fg"] = self._bodyTextColor
+        self.btnPedidos["command"] = self.btnPedidoClick
         self.btnPedidos.bind("<Enter>", self.on_enter)
         self.btnPedidos.bind("<Leave>", self.on_leave)
         self.btnPedidos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
@@ -154,6 +155,9 @@ class FramePrincipal(Frame):
     def btnAddProdutoClick(self):
         self.addProdutoFrame()    
 
+    def btnPedidoClick(self):
+        self.pedidoFrame()
+
     def btnImportaClick(self):
         self.importaFrame()
 
@@ -199,7 +203,6 @@ class FramePrincipal(Frame):
         scrollY.pack(side=LEFT, fill=Y)
 
 
-
         self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameExpTypes.pack(side=LEFT, anchor=N, ipadx=5, padx=45, pady=10)
 
@@ -212,7 +215,6 @@ class FramePrincipal(Frame):
             rdb["value"] = item
             rdb.pack(side=LEFT, anchor=N, ipadx=8)
         self.expPessoaVar.set("Ativos")
-
 
 
 
@@ -470,11 +472,27 @@ class FramePrincipal(Frame):
         scrollY["command"] = self.listProdutos.yview
         scrollY.pack(side=LEFT, fill=Y)
 
+
+        self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameExpTypes.pack(side=LEFT, anchor=N, ipadx=5, padx=45, pady=10)
+
+        expProd = ["Ativos", "Inativos"]
+        self.expProdVar = StringVar()
+        for item in expProd:
+            rdb = Radiobutton(self.frameExpTypes, bg=self._backgroundColor)
+            rdb["text"] = item
+            rdb["variable"] = self.expProdVar
+            rdb["value"] = item
+            rdb.pack(side=LEFT, anchor=N, ipadx=8)
+        self.expProdVar.set("Ativos")
+
+
         self.frameProdutosCommands = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameProdutosCommands.pack(side=BOTTOM, fill=X, expand=True, padx=50)
+
         
         self.btnDeleteProduto = Button(self.frameProdutosCommands, bg=self._menuColor, borderwidth=1)
-        self.btnDeleteProduto["text"] = "Remover"
+        self.btnDeleteProduto["text"] = "Inativar"
         self.btnDeleteProduto["command"] = self.btnInativaProdutoClick
         self.btnDeleteProduto["font"] = self._fontButton
         self.btnDeleteProduto["fg"] = self._bodyTextColor
@@ -562,6 +580,35 @@ class FramePrincipal(Frame):
         self.btnImportarDados.bind("<Enter>", self.on_enter)
         self.btnImportarDados.bind("<Leave>", self.on_leave)
         self.btnImportarDados.pack(side=TOP, fill=Y, anchor=N, padx=60, ipady=5, ipadx=15)
+
+    def dadosImportadosFrame(self, imported, importedtype):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblimporta = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblimporta["text"] = "Importar dados para Json"
+        self.lblimporta["font"] = self._fontSubtitle
+        self.lblimporta.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.frameImportados = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameImportados.pack(anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
+
+        scrollY = Scrollbar(self.frameImportados, orient=VERTICAL)
+
+        self.listImportados = Listbox(self.frameImportados, yscrollcommand=scrollY.set)
+        self.listImportados["height"] = 16
+        self.listImportados["selectmode"] = SINGLE
+
+        self.listImportados.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollY["command"] = self.listImportados.yview
+        scrollY.pack(side=LEFT, fill=Y)
+
+        self.carregaImportados(imported, importedtype)
 
     def exportarFrame(self):
         self.frameMain.destroy()
@@ -718,6 +765,21 @@ class FramePrincipal(Frame):
         self.entryGit.configure(state='readonly')
         self.entryGit.pack(side=TOP, fill=BOTH, anchor=W, ipadx=60, pady=5, padx=70)
 
+    def pedidoFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblPedidos = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblPedidos["text"] = "Pedidos de Venda"
+        self.lblPedidos["font"] = self._fontSubtitle
+        self.lblPedidos.pack(side=TOP, ipady=20, ipadx=40)
+        
+
     # Funcinalidades dentro dos Frames
     
     def btnInativaProdutoClick(self):
@@ -747,22 +809,18 @@ class FramePrincipal(Frame):
             importExport.exportarItens(self.entryExpName.get(), self.entryExpPath.get())
 
     def btnImportarDadosClick(self):
-        if (self.impTypeVar.get() == "Tudo"):
-            importExport.importarBanco(self.entryImpUrl.get())
+        if (self.impTypeVar.get() == "Tudo"): 
+            dados = importExport.importarBanco(self.entryImpUrl.get())
         elif (self.impTypeVar.get() == "Pessoas"):
-            importExport.importarPessoas(self.entryImpUrl.get())
+            dados = importExport.importarPessoas(self.entryImpUrl.get())
         elif (self.impTypeVar.get() == "Produtos"):
-            importExport.importarProdutos(self.entryImpUrl.get())
+            dados = importExport.importarProdutos(self.entryImpUrl.get())
         elif (self.impTypeVar.get() == "Pedidos"):
-            importExport.importarPedidos(self.entryImpUrl.get())
+            dados = importExport.importarPedidos(self.entryImpUrl.get())
         elif (self.impTypeVar.get() == "ItensPedidos"):
-            importExport.importarItensPedidos(self.entryImpUrl.get())
-
-
-    # def btnUpdateClienteClick(self):
-    #     cod = self.getSelectedPessoa()
-    #     print("Id: " + str(cod))
-
+            dados = importExport.importarItensPedidos(self.entryImpUrl.get())
+        self.dadosImportadosFrame(dados, self.impTypeVar.get()) 
+        
     def btnUpdateProdutoClick(self):
         cod = self.getSelectedProduto()
         produto = connect.selectProduto(cod)
@@ -832,6 +890,48 @@ class FramePrincipal(Frame):
         self.listProdutos.delete(0, END)
         for item in produtos:
             self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
+
+    # Exibição dos dados importados
+
+    def carregaImportados(self, imported, importedtype):
+        self.listImportados.delete(0, END)
+        if (importedtype == "Tudo"):
+            self.importedBanco(imported)
+        elif (importedtype == "Pessoas"):
+            self.importedPessoas(imported)
+        elif (importedtype == "Produtos"):
+            self.importedProdutos(imported)
+        elif (importedtype == "Pedidos"):
+            self.importedPedidos(imported)
+        elif (importedtype == "ItensPedidos"):
+            self.importedItens(imported)
+
+    def importedBanco(self, banco):
+        self.listImportados.delete(0, END)
+        self.importedPessoas(banco["Pessoas"])
+        self.importedProdutos(banco["Produtos"])
+        self.importedPedidos(banco["Pedidos"])
+        self.importedItens(banco["ItensPedido"])
+        
+    def importedPessoas(self, pessoas):
+        self.listImportados.insert(END, "Pessoas")
+        for pessoa in pessoas:
+                self.listImportados.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Senha: %-10s Telefone: %-16s Endereco: %-40s" %(pessoa["pessoa_id"], pessoa["nome"], pessoa["email"], pessoa["senha"], pessoa["telefone"], pessoa["endereco"])) 
+
+    def importedProdutos(self, produtos):
+        self.listImportados.insert(END, "Produtos")
+        for produto in produtos:
+                self.listImportados.insert(END, "Id: %-4d Nome: %-30s Quantidade: %-5s Preço: %-10s Descrição: %-30s" %(produto["produto_id"], produto["nome"], produto["quantidade"], produto["preco"], produto["descricao"])) 
+
+    def importedPedidos(self, pedidos):
+        self.listImportados.insert(END, "Pedidos")
+        for pedido in pedidos:
+                self.listImportados.insert(END, "Id: %-4d ClienteId: %-5s UsuarioId: %-5s Data: %-16s" %(pedido["pedido_id"], pedido["cliente_id"], pedido["usuario_id"], pedido["data_pedido"])) 
+
+    def importedItens(self, itens):
+        self.listImportados.insert(END, "Itens")
+        for item in itens:
+                self.listImportados.insert(END, "PedidoId: %-4d ProdutoId: %-5s Quantidade: %-5s Preço Unitario: %-16s" %(item["pedido_id"], item["produto_id"], item["quantidade"], item["preco_unitario"])) 
 
 def main():
     app = FramePrincipal()

@@ -85,29 +85,33 @@ def compactarArquivo(filename, path):
     zf.close()
     os.remove(os.path.join(os.sep, path, filename))
 
-
 def importarBanco(file_url):
     banco = requests.get(url=file_url)
     carregarPessoas(banco.json()["Pessoas"])
     carregarProdutos(banco.json()["Produtos"])
     carregarPedidos(banco.json()["Pedidos"])
     carregarItensPedidos(banco.json()["ItensPedido"])
+    return banco.json()
 
 def importarPessoas(file_url):
     dados = requests.get(url=file_url)
     carregarPessoas(dados)
+    return dados
 
 def importarProdutos(file_url):
     dados = requests.get(url=file_url)
     carregarProdutos(dados)
+    return dados
 
 def importarPedidos(file_url):
     dados = requests.get(url=file_url)
     carregarPedidos(dados)
+    return dados
 
 def importarItensPedidos(file_url):
     dados = requests.get(url=file_url)
     carregarItensPedidos(dados)
+    return dados
 
 def carregarPessoas(pessoas):
     for pessoa in pessoas:
