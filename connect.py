@@ -68,10 +68,21 @@ def inativaPessoa(pessoaId):
     global conn
     global cursor
     initialize()
-    sql = "UPDATE pessoa SET status = FALSE WHERE pessoa_id = %s"
+    sql = """DO
+            $BODY$
+            BEGIN
+                IF exists(SELECT (1) FROM pessoa where pessoa_id = %s and status = FALSE) THEN
+                    UPDATE pessoa SET status = TRUE where pessoa_id = %s;
+                ELSE 
+                    UPDATE pessoa SET status = FALSE where pessoa_id = %s;
+            END IF;
+            END
+            $BODY$"""
     sql_values = cursor.mogrify(sql, str(pessoaId))
     cursor.execute(sql_values)
     finalize()
+
+# "UPDATE pessoa SET status = FALSE WHERE pessoa_id = %s"
 
 # Produto
 
@@ -142,6 +153,24 @@ def selectPedidos(status=True):
     initialize()
     sql = "SELECT * FROM pedido" 
     sql += " WHERE status = TRUE" if status else ""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    finalize()
+    return result
+
+def selectPedidosJoin(status=True):
+    global conn
+    global cursor
+    initialize()
+    sql =  """
+        SELECT pd.pedido_id, usr.nome as usuario, cli.nome as cliente, pd.data_pedido, SUM(it.preco_unitario * it.quantidade) 
+        FROM item_pedido it 
+        INNER JOIN pedido pd ON it.pedido_id = pd.pedido_id 
+        INNER JOIN pessoa usr ON usr.pessoa_id = pd.usuario_id 
+        INNER JOIN pessoa cli ON cli.pessoa_id = pd.cliente_id """
+    #sql += "WHERE pd.status = TRUE " if status else ""
+    sql += "GROUP BY (pd.pedido_id, cli.pessoa_id, usr.pessoa_id) "
+    #sql += "ORDER BY (pd.pedido_id) DESC "
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()

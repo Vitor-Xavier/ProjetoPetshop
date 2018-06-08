@@ -26,8 +26,8 @@ CREATE TABLE produto (
 
 CREATE TABLE pedido (
     pedido_id       SERIAL PRIMARY KEY,
-    usuario_id      INTEGER REFERENCES pessoa (pessoa_id),
-    cliente_id      INTEGER REFERENCES pessoa (pessoa_id),
+    usuario_id      INTEGER REFERENCES pessoa(pessoa_id),
+    cliente_id      INTEGER REFERENCES pessoa(pessoa_id),
     data_pedido     TIMESTAMP,
 	status          BOOLEAN DEFAULT TRUE
 );
@@ -41,14 +41,37 @@ CREATE TABLE item_pedido (
     PRIMARY KEY(produto_id, pedido_id)
 );
 
--- DADOS
-
-SELECT * FROM pessoa;
+-- INSERTS
 
 INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES ('usr1', 'usr1@mail.com', '12345', '+551690909090', 'Rua Abilio Sampaio, 9666');
 
-SELECT * FROM produto;
+INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES ('usr2', 'usr2@mail.com', '12345', '+551680808080', 'Rua Sampaio Abilio, 6669');
 
 INSERT INTO produto (nome, descricao, quantidade, preco) 
 VALUES 
 ('Tigela', 'Tigela para pets', 15, 19.9);
+
+INSERT INTO pedido (usuario_id, cliente_id, data_pedido) VALUES (2, 1, CURRENT_TIMESTAMP);
+
+INSERT INTO item_pedido (produto_id, pedido_id, quantidade, preco_unitario) 
+VALUES
+(1, 1, 3, 19.9);
+
+-- SELECTS
+
+SELECT * FROM pessoa;
+
+SELECT * FROM produto;
+
+SELECT pd.pedido_id, cli.nome as Cliente, usr.nome as Usuario, pd.data_pedido, SUM(it.preco_unitario * it.quantidade) 
+FROM item_pedido it
+INNER JOIN pedido pd ON it.pedido_id = pd.pedido_id
+INNER JOIN pessoa usr ON usr.pessoa_id = pd.usuario_id
+INNER JOIN pessoa cli ON cli.pessoa_id = pd.cliente_id
+GROUP BY (pd.pedido_id, cli.pessoa_id, usr.nome)
+ORDER BY (pd.pedido_id);
+
+SELECT p.pedido_id, usr.nome, cli.nome, p.data_pedido
+FROM pedido p
+INNER JOIN pessoa usr ON usr.pessoa_id = p.usuario_id
+INNER JOIN pessoa cli ON cli.pessoa_id = p.cliente_id;

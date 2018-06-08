@@ -42,6 +42,7 @@ class FramePrincipal(Frame):
         py = int((self.master.winfo_screenheight() - altura) / 2)
         self.master.geometry("{}x{}+{}+{}".format(largura, altura, px, py))
 
+
     #Titulo Menu
     def addTitle(self, title):
         self.frameTitle = Frame(bg=self._barColor, height=120)
@@ -53,6 +54,7 @@ class FramePrincipal(Frame):
         self.lblTitle["text"] = title
         self.lblTitle.pack(side=LEFT, ipady=20, ipadx=40)
    
+
 
 
     #Menus Principais Laterais
@@ -131,6 +133,7 @@ class FramePrincipal(Frame):
         self.btnSair.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
 
+
     #----Animação Botão Sair
     def on_enter(self, event):
         event.widget['background'] = self._buttonHoverColor
@@ -139,10 +142,15 @@ class FramePrincipal(Frame):
         event.widget['background'] = self._menuColor
 
 
+
+
     #Tela lateral dos Menus principais
     def addFrame(self):
         self.frameMain = Frame(bg=self._backgroundColor)
         self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+
+
 
     # Commands dos botões laterias
 
@@ -228,7 +236,7 @@ class FramePrincipal(Frame):
         self.btnDeleteCliente["fg"] = self._bodyTextColor
         self.btnDeleteCliente.bind("<Enter>", self.on_enter)
         self.btnDeleteCliente.bind("<Leave>", self.on_leave)
-        self.btnDeleteCliente.pack(side=RIGHT, ipady=5, ipadx=15)
+        self.btnDeleteCliente.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
 
         self.btnRefreshCliente = Button(self.frameClientesCommands, bg=self._menuColor, borderwidth=1)
         self.btnRefreshCliente["text"] = "Atualizar"
@@ -499,6 +507,16 @@ class FramePrincipal(Frame):
         self.btnDeleteProduto.bind("<Enter>", self.on_enter)
         self.btnDeleteProduto.bind("<Leave>", self.on_leave)
         self.btnDeleteProduto.pack(side=RIGHT, ipady=5, ipadx=10)
+
+        self.btnRefreshProduto = Button(self.frameProdutosCommands, bg=self._menuColor, borderwidth=1)
+        self.btnRefreshProduto["text"] = "Atualizar"
+        self.btnRefreshProduto["font"] = self._fontButton
+        self.btnRefreshProduto["fg"] = self._bodyTextColor
+        self.btnRefreshProduto["command"] = self.btnRefreshProdutoClick
+        self.btnRefreshProduto.bind("<Enter>", self.on_enter)
+        self.btnRefreshProduto.bind("<Leave>", self.on_leave)
+        self.btnRefreshProduto.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
+
 
         self.btnUpdateProduto = Button(self.frameProdutosCommands, bg=self._menuColor, borderwidth=1)
         self.btnUpdateProduto["text"] = "Alterar"
@@ -778,6 +796,26 @@ class FramePrincipal(Frame):
         self.lblPedidos["text"] = "Pedidos de Venda"
         self.lblPedidos["font"] = self._fontSubtitle
         self.lblPedidos.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.framePedidos = Frame(self.frameMain, bg=self._backgroundColor)
+        self.framePedidos.pack(anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
+
+        scrollY = Scrollbar(self.framePedidos, orient=VERTICAL)
+
+        self.listPedidos = Listbox(self.framePedidos, yscrollcommand=scrollY.set)
+        self.listPedidos["height"] = 10
+        self.listPedidos["selectmode"] = SINGLE
+
+        #self.listProdutos.bind("<<ListboxSelect>>", self.onProdutoSelected)
+
+        self.listPedidos.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollY["command"] = self.listPedidos.yview
+        scrollY.pack(side=LEFT, fill=Y)
+
+        self.carregaPedidos()
+
+        self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameExpTypes.pack(side=LEFT, anchor=N, ipadx=5, padx=45, pady=10)
         
 
     # Funcinalidades dentro dos Frames
@@ -825,6 +863,10 @@ class FramePrincipal(Frame):
         cod = self.getSelectedProduto()
         produto = connect.selectProduto(cod)
         self.addProdutoFrame(produto)
+
+    def btnRefreshProdutoClick(self):
+        self.carregaProdutos((self.expProdVar.get() == "Ativos"))
+
 
     def btnUpdateClienteClick(self):
         cod = self.getSelectedPessoa()
@@ -877,6 +919,10 @@ class FramePrincipal(Frame):
         item = self.listProdutos.get(pos)
         return int(item[3:7])
 
+
+
+
+
     # Atualiza listas
 
     def carregaClientes(self, onlyAtivos=True):
@@ -890,6 +936,12 @@ class FramePrincipal(Frame):
         self.listProdutos.delete(0, END)
         for item in produtos:
             self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
+
+    def carregaPedidos(self, onlyAtivos=True):
+        pedidos = connect.selectPedidosJoin(onlyAtivos)
+        self.listPedidos.delete(0, END)
+        for item in pedidos:
+            self.listPedidos.insert(END, "Id: %-4d Operador: %-30s Cliente: %-40s Data: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
 
     # Exibição dos dados importados
 
