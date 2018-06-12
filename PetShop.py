@@ -3,6 +3,8 @@ import connect
 import models
 import importExport
 from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox as mbox
 import json
 import os
 import tkinter
@@ -28,7 +30,7 @@ class FramePrincipal(Frame):
     def __init__(self, master=None):
         super().__init__()
         self.master.title(self._title)
-        self.master.resizable(False, False)
+        #self.master.resizable(False, False)
         #self.master.iconbitmap("res/icon.ico")
         self.master["bg"] = self._backgroundColor
         self.centralizar(1000, 600) # Resolução da tela principal
@@ -37,11 +39,16 @@ class FramePrincipal(Frame):
         self.addMenu()
         self.addFrame()
 
+        self.loggedUser = models.Pessoa()
+        self.loggedUser.pessoa_id = 1
+
     def centralizar(self, largura, altura):
         px = int((self.master.winfo_screenwidth() - largura) / 2)
         py = int((self.master.winfo_screenheight() - altura) / 2)
         self.master.geometry("{}x{}+{}+{}".format(largura, altura, px, py))
 
+    def exibirMensagem(self, msg):
+        mbox.showinfo("Pet Shop", msg) 
 
     #Titulo Menu
     def addTitle(self, title):
@@ -53,9 +60,6 @@ class FramePrincipal(Frame):
         self.lblTitle["fg"] = self._primaryTextColor
         self.lblTitle["text"] = title
         self.lblTitle.pack(side=LEFT, ipady=20, ipadx=40)
-   
-
-
 
     #Menus Principais Laterais
     def addMenu(self):
@@ -81,6 +85,16 @@ class FramePrincipal(Frame):
         self.btnProdutos.bind("<Enter>", self.on_enter)
         self.btnProdutos.bind("<Leave>", self.on_leave)
         self.btnProdutos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
+
+        #Botão Novo Pedido
+        self.btnPedidos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
+        self.btnPedidos["text"] = "Novo Pedido"
+        self.btnPedidos["font"] = self._fontButton
+        self.btnPedidos["fg"] = self._bodyTextColor
+        self.btnPedidos["command"] = self.btnNovoPedidoClick
+        self.btnPedidos.bind("<Enter>", self.on_enter)
+        self.btnPedidos.bind("<Leave>", self.on_leave)
+        self.btnPedidos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Pedidos
         self.btnPedidos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
@@ -133,8 +147,7 @@ class FramePrincipal(Frame):
         self.btnSair.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
 
-
-    #----Animação Botão Sair
+    #----Animação dos Botões
     def on_enter(self, event):
         event.widget['background'] = self._buttonHoverColor
 
@@ -142,14 +155,10 @@ class FramePrincipal(Frame):
         event.widget['background'] = self._menuColor
 
 
-
-
     #Tela lateral dos Menus principais
     def addFrame(self):
         self.frameMain = Frame(bg=self._backgroundColor)
         self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
-
-
 
 
     # Commands dos botões laterias
@@ -165,6 +174,9 @@ class FramePrincipal(Frame):
 
     def btnPedidoClick(self):
         self.pedidoFrame()
+
+    def btnNovoPedidoClick(self):
+        self.addPedidoFrame()
 
     def btnImportaClick(self):
         self.importaFrame()
@@ -209,7 +221,6 @@ class FramePrincipal(Frame):
         self.listClientes.pack(side=LEFT, fill=BOTH, expand=True)
         scrollY["command"] = self.listClientes.yview
         scrollY.pack(side=LEFT, fill=Y)
-
 
         self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameExpTypes.pack(side=LEFT, anchor=N, ipadx=5, padx=45, pady=10)
@@ -377,7 +388,7 @@ class FramePrincipal(Frame):
             self.frameProdId.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
 
             self.lblProdId = Label(self.frameProdId, bg=self._backgroundColor)
-            self.lblProdId["text"] = "Nome"
+            self.lblProdId["text"] = "Código"
             self.lblProdId["font"] = self._fontText
             self.lblProdId.pack(side=TOP, fill=Y, anchor=W)
 
@@ -516,7 +527,6 @@ class FramePrincipal(Frame):
         self.btnRefreshProduto.bind("<Enter>", self.on_enter)
         self.btnRefreshProduto.bind("<Leave>", self.on_leave)
         self.btnRefreshProduto.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
-
 
         self.btnUpdateProduto = Button(self.frameProdutosCommands, bg=self._menuColor, borderwidth=1)
         self.btnUpdateProduto["text"] = "Alterar"
@@ -805,8 +815,7 @@ class FramePrincipal(Frame):
         self.listPedidos = Listbox(self.framePedidos, yscrollcommand=scrollY.set)
         self.listPedidos["height"] = 10
         self.listPedidos["selectmode"] = SINGLE
-
-        #self.listProdutos.bind("<<ListboxSelect>>", self.onProdutoSelected)
+        self.listPedidos.bind("<<ListboxSelect>>", self.onPedidoSelected)
 
         self.listPedidos.pack(side=LEFT, fill=BOTH, expand=True)
         scrollY["command"] = self.listPedidos.yview
@@ -817,6 +826,224 @@ class FramePrincipal(Frame):
         self.frameExpTypes = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameExpTypes.pack(side=LEFT, anchor=N, ipadx=5, padx=45, pady=10)
         
+    def addPedidoFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblPedido = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblPedido["text"] = "Novo pedido"
+        self.lblPedido["font"] = self._fontSubtitle
+        self.lblPedido.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.framePedido = Frame(self.frameMain, bg=self._backgroundColor)
+        self.framePedido.pack(anchor=N, fill=BOTH, padx=60, ipadx=60, pady=10)
+
+        self.framePedidoId = Frame(self.framePedido, bg=self._backgroundColor, width=40)
+        self.framePedidoId.pack(side=LEFT, anchor=N, fill=BOTH)
+
+        self.lblPedidoId = Label(self.framePedidoId, bg=self._backgroundColor)
+        self.lblPedidoId["text"] = "Código"
+        self.lblPedidoId["font"] = self._fontText
+        self.lblPedidoId.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryPedidoId = Entry(self.framePedidoId, bg=self._backgroundColor, width=20)
+        self.entryPedidoId["font"] = self._fontBody
+        self.entryPedidoId.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.entryPedidoId.insert(0, self.novoPedido())
+        self.entryPedidoId.configure(state='readonly')
+
+        self.framePedCliente = Frame(self.framePedido, bg=self._backgroundColor, width=40)
+        self.framePedCliente.pack(side=LEFT, anchor=N, fill=BOTH)
+
+        self.lblPedCliente = Label(self.framePedCliente, bg=self._backgroundColor)
+        self.lblPedCliente["text"] = "Cliente"
+        self.lblPedCliente["font"] = self._fontText
+        self.lblPedCliente.pack(side=TOP, fill=Y, anchor=W)
+
+        clientes = self.carregaBoxClientes()
+        self.cliente_value = StringVar()
+        self.comboCliente = ttk.Combobox(self.framePedCliente, textvariable=self.cliente_value, values=clientes, state='readonly')
+        self.comboCliente.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.framePedidoData = Frame(self.framePedido, bg=self._backgroundColor, width=40)
+        self.framePedidoData.pack(side=LEFT, anchor=N, fill=BOTH)
+
+        self.lblPedidoData = Label(self.framePedidoData, bg=self._backgroundColor)
+        self.lblPedidoData["text"] = "Data"
+        self.lblPedidoData["font"] = self._fontText
+        self.lblPedidoData.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryPedidoData = Entry(self.framePedidoData, bg=self._backgroundColor,width=50)
+        self.entryPedidoData["font"] = self._fontBody
+        self.entryPedidoData.pack(side=TOP, anchor=W, padx=15, pady=5)
+        
+        self.framePedQtd = Frame(self.frameMain, bg=self._backgroundColor, width=50)
+        self.framePedQtd.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblPedQtd = Label(self.framePedQtd, bg=self._backgroundColor)
+        self.lblPedQtd["text"] = "Quantidade"
+        self.lblPedQtd["font"] = self._fontText
+        self.lblPedQtd.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryPedQtd = Entry(self.framePedQtd, bg=self._backgroundColor,width=20)
+        self.entryPedQtd["font"] = self._fontBody
+        self.entryPedQtd.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.entryPedQtd.insert(0, "1")
+
+        self.frameProdItens = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameProdItens.pack(anchor=N, fill=BOTH, padx=50, pady=15)
+
+        self.frameProdutos = Frame(self.frameProdItens, bg=self._backgroundColor)
+        self.frameProdutos.pack(side=LEFT, anchor=N, fill=BOTH, padx=10, expand=True)
+
+        scrollY = Scrollbar(self.frameProdutos, orient=VERTICAL)
+
+        self.listPedProdutos = Listbox(self.frameProdutos, yscrollcommand=scrollY.set)
+        self.listPedProdutos["height"] = 8
+        self.listPedProdutos["selectmode"] = SINGLE
+
+        self.carregaPedProdutos()
+        #self.listProdutos.bind("<<ListboxSelect>>", self.onProdutoSelected)
+
+        self.listPedProdutos.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollY["command"] = self.listPedProdutos.yview
+        scrollY.pack(side=LEFT, fill=Y)
+
+        self.frameItens = Frame(self.frameProdItens, bg=self._backgroundColor)
+        self.frameItens.pack(side=LEFT, anchor=N, fill=BOTH, padx=10, expand=True)
+
+        scrollY2 = Scrollbar(self.frameItens, orient=VERTICAL)
+
+        self.listItens = Listbox(self.frameItens, yscrollcommand=scrollY2.set)
+        self.listItens["height"] = 8
+        self.listItens["selectmode"] = SINGLE
+
+        self.carregaItens()
+
+        self.listItens.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollY2["command"] = self.listItens.yview
+        scrollY2.pack(side=LEFT, fill=Y)
+
+        self.frameButtons = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameButtons.pack(side=BOTTOM, anchor=N, fill=BOTH, padx=50, expand=True)
+
+        self.btnAddItemPedido = Button(self.frameButtons, bg=self._menuColor, borderwidth=1)
+        self.btnAddItemPedido["text"] = "Adicionar"
+        self.btnAddItemPedido["font"] = self._fontButton
+        self.btnAddItemPedido["fg"] = self._bodyTextColor
+        self.btnAddItemPedido["command"] = self.btnAddItemClick
+        self.btnAddItemPedido.bind("<Enter>", self.on_enter)
+        self.btnAddItemPedido.bind("<Leave>", self.on_leave)
+        self.btnAddItemPedido.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
+        
+        self.btnFinalizaPedido = Button(self.frameButtons, bg=self._menuColor, borderwidth=1)
+        self.btnFinalizaPedido["text"] = "Finalizar"
+        self.btnFinalizaPedido["font"] = self._fontButton
+        self.btnFinalizaPedido["fg"] = self._bodyTextColor
+        self.btnFinalizaPedido["command"] = self.btnFinalizaPedidoClick
+        self.btnFinalizaPedido.bind("<Enter>", self.on_enter)
+        self.btnFinalizaPedido.bind("<Leave>", self.on_leave)
+        self.btnFinalizaPedido.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
+
+        self.btnRemoveItemPedido = Button(self.frameButtons, bg=self._menuColor, borderwidth=1)
+        self.btnRemoveItemPedido["text"] = "Remover"
+        self.btnRemoveItemPedido["font"] = self._fontButton
+        self.btnRemoveItemPedido["fg"] = self._bodyTextColor
+        self.btnRemoveItemPedido["command"] = self.btnRemoveItemClick
+        self.btnRemoveItemPedido.bind("<Enter>", self.on_enter)
+        self.btnRemoveItemPedido.bind("<Leave>", self.on_leave)
+        self.btnRemoveItemPedido.pack(side=RIGHT, ipady=5, ipadx=10, padx=10)
+
+    def sobrePedidoFrame(self, pedido):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblPedido = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblPedido["text"] = "Pedido"
+        self.lblPedido["font"] = self._fontSubtitle
+        self.lblPedido.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.framePedido = Frame(self.frameMain, bg=self._backgroundColor)
+        self.framePedido.pack(anchor=N, fill=BOTH, padx=60, ipadx=60, pady=10)
+
+        self.framePedidoId = Frame(self.framePedido, bg=self._backgroundColor, width=40)
+        self.framePedidoId.pack(side=LEFT, anchor=N, fill=BOTH)
+
+        self.lblPedidoId = Label(self.framePedidoId, bg=self._backgroundColor)
+        self.lblPedidoId["text"] = "Código"
+        self.lblPedidoId["font"] = self._fontText
+        self.lblPedidoId.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryPedidoId = Entry(self.framePedidoId, bg=self._backgroundColor, width=20)
+        self.entryPedidoId["font"] = self._fontBody
+        self.entryPedidoId.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.framePedCliente = Frame(self.framePedido, bg=self._backgroundColor, width=40)
+        self.framePedCliente.pack(side=LEFT, anchor=N, fill=BOTH)
+
+        self.lblPedCliente = Label(self.framePedCliente, bg=self._backgroundColor)
+        self.lblPedCliente["text"] = "Cliente"
+        self.lblPedCliente["font"] = self._fontText
+        self.lblPedCliente.pack(side=TOP, fill=Y, anchor=W)
+        
+        cliente = connect.selectPessoa(pedido[2])
+
+        clientes = []
+        clientes.append("%-4s - %-30s" %(cliente[0], cliente[1]))
+
+        self.cliente_value = StringVar()
+        self.comboCliente = ttk.Combobox(self.framePedCliente, textvariable=self.cliente_value, values=clientes, state='readonly')
+        self.comboCliente.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.framePedidoData = Frame(self.framePedido, bg=self._backgroundColor, width=40)
+        self.framePedidoData.pack(side=LEFT, anchor=N, fill=BOTH)
+
+        self.lblPedidoData = Label(self.framePedidoData, bg=self._backgroundColor)
+        self.lblPedidoData["text"] = "Data"
+        self.lblPedidoData["font"] = self._fontText
+        self.lblPedidoData.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryPedidoData = Entry(self.framePedidoData, bg=self._backgroundColor,width=50)
+        self.entryPedidoData["font"] = self._fontBody
+        self.entryPedidoData.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.frameProdItens = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameProdItens.pack(anchor=N, fill=BOTH, padx=50, pady=15)
+
+        self.frameItens = Frame(self.frameProdItens, bg=self._backgroundColor)
+        self.frameItens.pack(side=LEFT, anchor=N, fill=BOTH, padx=10, expand=True)
+
+        scrollY2 = Scrollbar(self.frameItens, orient=VERTICAL)
+
+        self.listItens = Listbox(self.frameItens, yscrollcommand=scrollY2.set)
+        self.listItens["height"] = 8
+        self.listItens["selectmode"] = SINGLE 
+
+        self.listItens.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollY2["command"] = self.listItens.yview
+        scrollY2.pack(side=LEFT, fill=Y)
+
+        self.entryPedidoId.insert(0, pedido[0])
+        self.entryPedidoId.configure(state='readonly')
+
+        self.entryPedidoData.insert(0, pedido[3])
+        self.entryPedidoData.configure(state='readonly')
+
+        self.comboCliente.current(0)
+
+        self.carregaItens()
 
     # Funcinalidades dentro dos Frames
     
@@ -829,6 +1056,13 @@ class FramePrincipal(Frame):
         cod = self.getSelectedPessoa()
         connect.inativaPessoa(cod)
         self.carregaClientes()
+
+    def onPedidoSelected(self, event):
+        pos = self.listPedidos.curselection()
+        item = self.listPedidos.get(pos)
+        pedidoId = int(item[3:7])
+        pedido = connect.selectPedido(pedidoId)
+        self.sobrePedidoFrame(pedido)
 
     def onClienteSelected(self, event):
         cod = self.getSelectedPessoa()
@@ -867,7 +1101,6 @@ class FramePrincipal(Frame):
     def btnRefreshProdutoClick(self):
         self.carregaProdutos((self.expProdVar.get() == "Ativos"))
 
-
     def btnUpdateClienteClick(self):
         cod = self.getSelectedPessoa()
         pessoa = connect.selectPessoa(cod)
@@ -878,9 +1111,39 @@ class FramePrincipal(Frame):
         # cod = self.getSelectedPessoa()
         # print("Id: " + str(cod))
 
+    def btnFinalizaPedidoClick(self):
+        try:
+            pedidoId = int(self.entryPedidoId.get())
+            clienteId = str(self.getSelectPedCliente())
+            connect.updatePedidoCliente(pedidoId, clienteId)
+            self.pedidoFrame()
+        except Exception:
+            self.exibirMensagem("Nenhum cliente selecionado")
+
     def btnAddClienteClick(self):
         self.addClienteFrame()
 
+    def btnAddItemClick(self):
+        item = models.ItemPedido()
+        item.pedido_id = int(self.entryPedidoId.get())
+        item.produto_id = self.getSelectedPedProduto()
+        item.quantidade = int(self.entryPedQtd.get())
+        item.preco_unitario = connect.selectProduto(item.produto_id)[4]
+        prodQtd = connect.selectProduto(item.produto_id)[3]
+        if (prodQtd - item.quantidade) >= 0:
+            connect.insertItemPedido(item)
+            connect.updateProdutoQtd(item.produto_id, item.quantidade * -1)
+            self.carregaItens()
+            self.carregaPedProdutos()
+        else:
+            self.exibirMensagem("Quantidade superior ao disponivel em estoque")
+
+    def btnRemoveItemClick(self):
+        produtoId, pedidoId = self.getSelectedItemProduto()
+        connect.inativaItemPedido(pedidoId, produtoId)
+        self.carregaItens()
+        self.carregaPedProdutos()
+        
     def btnAddClienteBancoClick(self):
         pessoa = models.Pessoa()
         pessoa.nome = self.entryName.get()
@@ -908,6 +1171,12 @@ class FramePrincipal(Frame):
         else:
             connect.insertProduto(produto)
         self.produtosFrame()       
+
+    def novoPedido(self):
+        pedido = models.Pedido()
+        pedido.usuario_id = self.loggedUser.pessoa_id
+        pedido.cliente_id = self.loggedUser.pessoa_id
+        return connect.insertPedido(pedido)
     
     def getSelectedPessoa(self):
         pos = self.listClientes.curselection()
@@ -919,9 +1188,20 @@ class FramePrincipal(Frame):
         item = self.listProdutos.get(pos)
         return int(item[3:7])
 
+    def getSelectedPedProduto(self):
+        pos = self.listPedProdutos.curselection()
+        produto = self.listPedProdutos.get(pos)
+        return int(produto[0:4])
 
+    def getSelectedItemProduto(self):
+        pos = self.listItens.curselection()
+        item = self.listItens.get(pos)
+        produtoId = int(item[0:4])
+        pedidoId = int(item[4:8])
+        return produtoId, pedidoId
 
-
+    def getSelectPedCliente(self):
+        return int(self.cliente_value.get()[0:4])
 
     # Atualiza listas
 
@@ -937,11 +1217,31 @@ class FramePrincipal(Frame):
         for item in produtos:
             self.listProdutos.insert(END, "Id: %-4d Nome: %-30s Descrição: %-40s Quantidade: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
 
+    def carregaPedProdutos(self, onlyAtivos=True):
+        produtos = connect.selectProdutos(onlyAtivos)
+        self.listPedProdutos.delete(0, END)
+        for item in produtos:
+            self.listPedProdutos.insert(END, "%-4d Nome: %-30s  Quantidade: %-4s Preço: %-10s" %(item[0], item[1], item[3], item[4]))
+
     def carregaPedidos(self, onlyAtivos=True):
         pedidos = connect.selectPedidosJoin(onlyAtivos)
         self.listPedidos.delete(0, END)
         for item in pedidos:
             self.listPedidos.insert(END, "Id: %-4d Operador: %-30s Cliente: %-40s Data: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
+
+    def carregaItens(self):
+        pedidoId = int(self.entryPedidoId.get())
+        itens = connect.selectItens(pedidoId)
+        self.listItens.delete(0, END)
+        for item in itens:
+            self.listItens.insert(END, "%-4d %-4d Produto: %-15s Quantidade: %-4d Preço Unit.: %-8s Preço Total: %-8s" %(item[0], item[1], item[2], item[3], item[4], item[5]))
+
+    def carregaBoxClientes(self):
+        pessoas = connect.selectPessoas()
+        clientes = []
+        for pessoa in pessoas:
+            clientes.append("%-4s - %-30s" %(pessoa[0], pessoa[1]))
+        return clientes
 
     # Exibição dos dados importados
 

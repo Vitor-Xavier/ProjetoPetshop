@@ -127,6 +127,19 @@ def updateProduto(produto):
     cursor.execute(sql_values)
     finalize()
 
+def updateProdutoQtd(produtoId, qtd):
+    global conn
+    global cursor
+    initialize()
+    select_sql = "SELECT quantidade FROM produto WHERE produto_id = %s"
+    select_values = cursor.mogrify(select_sql, (produtoId, ))
+    cursor.execute(select_values)
+    qtd_atual = cursor.fetchone()[0]
+    sql = "UPDATE produto SET quantidade = %s WHERE produto_id = %s"
+    sql_values = cursor.mogrify(sql, (int(qtd_atual) + int(qtd), produtoId))
+    cursor.execute(sql_values)
+    finalize()
+
 def inativaProduto(produtoId):
     global conn
     global cursor
@@ -142,10 +155,12 @@ def insertPedido(pedido):
     global conn
     global cursor
     initialize()
-    sql = "INSERT INTO pedido (pedido_id, usuario_id, cliente_id, data_pedido) VALUES (%s, %s, %s, %s)"
-    sql_values = cursor.mogrify(sql, (pedido.pedido_id, pedido.usuario_id, pedido.cliente_id, pedido.data_pedido))
+    sql = "INSERT INTO pedido (usuario_id, cliente_id, data_pedido, status) VALUES (%s, %s, CURRENT_TIMESTAMP, FALSE)  RETURNING pedido_id"
+    sql_values = cursor.mogrify(sql, (pedido.usuario_id, pedido.cliente_id))
     cursor.execute(sql_values)
+    pedidoId = cursor.fetchone()[0]
     finalize()
+    return pedidoId
 
 def selectPedidos(status=True):
     global conn
@@ -158,19 +173,43 @@ def selectPedidos(status=True):
     finalize()
     return result
 
+def selectPedido(pedidoId, status=True):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT * FROM pedido WHERE pedido_id = %s" 
+    sql += " AND status = TRUE" if status else ""
+    sql_values = cursor.mogrify(sql, (str(pedidoId), ))
+    cursor.execute(sql_values)
+    result = cursor.fetchone()
+    finalize()
+    return result
+
+def updatePedidoCliente(pedidoId, clienteId):
+    global conn
+    global cursor
+    initialize()
+    sql = "UPDATE pedido SET cliente_id = %s, status = TRUE WHERE pedido_id = %s" 
+    sql_values = cursor.mogrify(sql, (str(clienteId), str(pedidoId)))
+    cursor.execute(sql_values)
+    finalize()
+
 def selectPedidosJoin(status=True):
     global conn
     global cursor
     initialize()
     sql =  """
-        SELECT pd.pedido_id, usr.nome as usuario, cli.nome as cliente, pd.data_pedido, SUM(it.preco_unitario * it.quantidade) 
+        SELECT pd.pedido_id, cli.nome as Cliente, usr.nome as Usuario, pd.data_pedido, COALESCE(SUM(it.preco_unitario * it.quantidade), SUM(it.preco_unitario * it.quantidade), 0)  
         FROM item_pedido it 
-        INNER JOIN pedido pd ON it.pedido_id = pd.pedido_id 
+        RIGHT JOIN pedido pd ON it.pedido_id = pd.pedido_id  
         INNER JOIN pessoa usr ON usr.pessoa_id = pd.usuario_id 
-        INNER JOIN pessoa cli ON cli.pessoa_id = pd.cliente_id """
-    #sql += "WHERE pd.status = TRUE " if status else ""
-    sql += "GROUP BY (pd.pedido_id, cli.pessoa_id, usr.pessoa_id) "
-    #sql += "ORDER BY (pd.pedido_id) DESC "
+        INNER JOIN pessoa cli ON cli.pessoa_id = pd.cliente_id
+        """
+    sql += "WHERE pd.status = TRUE " if status else ""
+    sql += """
+        GROUP BY (pd.pedido_id, cli.pessoa_id, usr.nome) 
+        ORDER BY (pd.pedido_id) DESC
+        """
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
@@ -181,7 +220,7 @@ def inativaPedido(pedidoId):
     global cursor
     initialize()
     sql = "UPDATE pedido SET status = FALSE WHERE pedido_id = %s"
-    sql_values = cursor.mogrify(sql, str(pedidoId))
+    sql_values = cursor.mogrify(sql, (str(pedidoId), ))
     cursor.execute(sql_values)
     finalize()
 
@@ -191,29 +230,22 @@ def insertItemPedido(itemPedido):
     global conn
     global cursor
     initialize()
-    sql = "INSERT INTO itemPedido (produto_id, pedido_id, quantidade, preco_unitario) VALUES (%s, %s, %s, %s)"
+    sql = "INSERT INTO item_pedido (produto_id, pedido_id, quantidade, preco_unitario) VALUES (%s, %s, %s, %s)"
     sql_values = cursor.mogrify(sql, (itemPedido.produto_id, itemPedido.pedido_id, itemPedido.quantidade, itemPedido.preco_unitario))
     cursor.execute(sql_values)
     finalize()
 
-def selectItens(status=True):
+def selectItens(pedidoId, status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM pedido" 
-    sql += " WHERE status = TRUE" if status else ""
-    cursor.execute(sql)
-    result = cursor.fetchall()
-    finalize()
-    return result
-
-def selectItensPorPedido(pedidoId, status=True):
-    global conn
-    global cursor
-    initialize()
-    sql = "SELECT * FROM pedido WHERE pedido_id = %s" 
-    sql += " AND status = TRUE" if status else ""
-    sql_values = cursor.mogrify(sql, (pedidoId))
+    sql = """
+        SELECT it.produto_id, it.pedido_id, pr.nome, it.quantidade, pr.preco, (it.quantidade * pr.preco)
+        FROM item_pedido it
+        INNER JOIN produto pr ON it.produto_id = pr.produto_id
+        WHERE it.pedido_id = %s AND it.status = TRUE
+    """
+    sql_values = cursor.mogrify(sql, (str(pedidoId), ))
     cursor.execute(sql_values)
     result = cursor.fetchall()
     finalize()
@@ -261,4 +293,4 @@ p.endereco = "Rua 1"
 
 #insertPessoa(p)
 #selectPessoas()
-login("usuario@mail.com", "123")
+#login("usuario@mail.com", "123")

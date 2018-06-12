@@ -7,7 +7,7 @@ class FramePrincipal(Frame):
 
     def __init__(self, master=None):
         super().__init__()
-        self.master.geometry("300x190")
+        self.centralizar(300, 190)
         self.master.title("Pet Shop")
         #self.master.iconbitmap("res/icon.ico")
         self.master.configure(background="white")
@@ -69,6 +69,11 @@ class FramePrincipal(Frame):
         self.btnClear["bg"] = PetShop.FramePrincipal._backgroundColor
         self.btnClear["command"] = self.btnClearClick 
         self.btnClear.pack(side=RIGHT, pady=1)
+
+    def centralizar(self, largura, altura):
+        px = int((self.master.winfo_screenwidth() - largura) / 2)
+        py = int((self.master.winfo_screenheight() - altura) / 2)
+        self.master.geometry("{}x{}+{}+{}".format(largura, altura, px, py))
 
     # Tratadores de eventos
     def trocarFoco(self, event):
