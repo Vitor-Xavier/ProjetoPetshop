@@ -7,7 +7,7 @@ import requests
 
 def exportarBanco(filename, path):
     filename += ".json"
-    itens = connect.selectItens()
+    itens = connect.selectTodosItens()
     pedidos = connect.selectPedidos()
     produtos = connect.selectProdutos()
     pessoas = connect.selectPessoas()
@@ -64,7 +64,7 @@ def exportarPedidos(filename, path):
 
 def exportarItens(filename, path):
     filename += ".json"
-    itens = connect.selectItens()
+    itens = connect.selectTodosItens()
 
     try:
         file = open(os.path.join(os.sep, path, filename), "w")

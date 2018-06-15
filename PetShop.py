@@ -855,7 +855,9 @@ class FramePrincipal(Frame):
         self.entryPedidoId["font"] = self._fontBody
         self.entryPedidoId.pack(side=TOP, anchor=W, padx=15, pady=5)
 
-        self.entryPedidoId.insert(0, self.novoPedido())
+        pedidoId, data_pedido = self.novoPedido()
+
+        self.entryPedidoId.insert(0, pedidoId)
         self.entryPedidoId.configure(state='readonly')
 
         self.framePedCliente = Frame(self.framePedido, bg=self._backgroundColor, width=40)
@@ -881,7 +883,11 @@ class FramePrincipal(Frame):
 
         self.entryPedidoData = Entry(self.framePedidoData, bg=self._backgroundColor,width=50)
         self.entryPedidoData["font"] = self._fontBody
+        self.entryPedidoData.configure(state='readonly')
         self.entryPedidoData.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.entryPedidoData.insert(0, data_pedido)
+        self.entryPedidoData.configure(state='readonly')
         
         self.framePedQtd = Frame(self.frameMain, bg=self._backgroundColor, width=50)
         self.framePedQtd.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)

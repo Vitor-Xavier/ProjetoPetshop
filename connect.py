@@ -155,19 +155,21 @@ def insertPedido(pedido):
     global conn
     global cursor
     initialize()
-    sql = "INSERT INTO pedido (usuario_id, cliente_id, data_pedido, status) VALUES (%s, %s, CURRENT_TIMESTAMP, FALSE)  RETURNING pedido_id"
+    sql = "INSERT INTO pedido (usuario_id, cliente_id, data_pedido, status) VALUES (%s, %s, CURRENT_TIMESTAMP, FALSE) RETURNING pedido_id, TO_CHAR(data_pedido, 'HH24:MI dd/MM/YYYY')"
     sql_values = cursor.mogrify(sql, (pedido.usuario_id, pedido.cliente_id))
     cursor.execute(sql_values)
-    pedidoId = cursor.fetchone()[0]
+    ped = cursor.fetchone()
+    pedidoId = ped[0]
+    data_pedido = ped[1]
     finalize()
-    return pedidoId
+    return pedidoId, data_pedido
 
 def selectPedidos(status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM pedido" 
-    sql += " WHERE status = TRUE" if status else ""
+    sql = "SELECT pedido_id, usuario_id, cliente_id, TO_CHAR(data_pedido, 'HH24:MI dd/MM/YYYY'), status FROM pedido " 
+    sql += "WHERE status = TRUE" if status else ""
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
@@ -177,8 +179,8 @@ def selectPedido(pedidoId, status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM pedido WHERE pedido_id = %s" 
-    sql += " AND status = TRUE" if status else ""
+    sql = "SELECT pedido_id, usuario_id, cliente_id, TO_CHAR(data_pedido, 'HH24:MI dd/MM/YYYY'), status FROM pedido WHERE pedido_id = %s " 
+    sql += "AND status = TRUE" if status else ""
     sql_values = cursor.mogrify(sql, (str(pedidoId), ))
     cursor.execute(sql_values)
     result = cursor.fetchone()
@@ -199,7 +201,7 @@ def selectPedidosJoin(status=True):
     global cursor
     initialize()
     sql =  """
-        SELECT pd.pedido_id, cli.nome as Cliente, usr.nome as Usuario, pd.data_pedido, COALESCE(SUM(it.preco_unitario * it.quantidade), SUM(it.preco_unitario * it.quantidade), 0)  
+        SELECT pd.pedido_id, cli.nome as Cliente, usr.nome as Usuario, TO_CHAR(pd.data_pedido, 'HH24:MI dd/MM/YYYY'), COALESCE(SUM(it.preco_unitario * it.quantidade), SUM(it.preco_unitario * it.quantidade), 0)  
         FROM item_pedido it 
         RIGHT JOIN pedido pd ON it.pedido_id = pd.pedido_id  
         INNER JOIN pessoa usr ON usr.pessoa_id = pd.usuario_id 
@@ -251,11 +253,25 @@ def selectItens(pedidoId, status=True):
     finalize()
     return result
 
+def selectTodosItens():
+    global conn
+    global cursor
+    initialize()
+    sql = """
+        SELECT it.produto_id, it.pedido_id, pr.nome, it.quantidade, pr.preco, (it.quantidade * pr.preco)
+        FROM item_pedido it
+        INNER JOIN produto pr ON it.produto_id = pr.produto_id
+    """
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    finalize()
+    return result
+
 def inativaItemPedido(pedidoId, produtoId):
     global conn
     global cursor
     initialize()
-    sql = "UPDATE item_pedido SET status = FALSE WHERE pedido_id = %s AND produto_id = %s"
+    sql = "DELETE FROM item_pedido WHERE pedido_id = %s AND produto_id = %s"
     sql_values = cursor.mogrify(sql, (pedidoId, produtoId))
     cursor.execute(sql_values)
     finalize()

@@ -63,15 +63,16 @@ SELECT * FROM pessoa;
 
 SELECT * FROM produto;
 
-SELECT pd.pedido_id, cli.nome as Cliente, usr.nome as Usuario, pd.data_pedido, SUM(it.preco_unitario * it.quantidade) 
-FROM item_pedido it
-INNER JOIN pedido pd ON it.pedido_id = pd.pedido_id
-INNER JOIN pessoa usr ON usr.pessoa_id = pd.usuario_id
-INNER JOIN pessoa cli ON cli.pessoa_id = pd.cliente_id
-GROUP BY (pd.pedido_id, cli.pessoa_id, usr.nome)
-ORDER BY (pd.pedido_id);
+-- SELECT pd.pedido_id, cli.nome as Cliente, usr.nome as Usuario, pd.data_pedido, COALESCE(SUM(it.preco_unitario * it.quantidade), SUM(it.preco_unitario * it.quantidade), 0)  
+-- FROM item_pedido it 
+-- RIGHT JOIN pedido pd ON it.pedido_id = pd.pedido_id  
+-- INNER JOIN pessoa usr ON usr.pessoa_id = pd.usuario_id 
+-- INNER JOIN pessoa cli ON cli.pessoa_id = pd.cliente_id
+-- WHERE pd.status = TRUE 
+-- GROUP BY (pd.pedido_id, cli.pessoa_id, usr.nome) 
+-- ORDER BY (pd.pedido_id) DESC 
 
-SELECT p.pedido_id, usr.nome, cli.nome, p.data_pedido
-FROM pedido p
-INNER JOIN pessoa usr ON usr.pessoa_id = p.usuario_id
-INNER JOIN pessoa cli ON cli.pessoa_id = p.cliente_id;
+-- SELECT p.pedido_id, usr.nome, cli.nome, p.data_pedido
+-- FROM pedido p
+-- INNER JOIN pessoa usr ON usr.pessoa_id = p.usuario_id
+-- INNER JOIN pessoa cli ON cli.pessoa_id = p.cliente_id;
