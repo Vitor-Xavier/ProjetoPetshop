@@ -45,8 +45,9 @@ def selectPessoas(status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT pessoa_id, nome, email, telefone, endereco FROM pessoa"
-    sql += " WHERE status = TRUE" if status else ""
+    sql = "SELECT pessoa_id, nome, email, telefone, endereco FROM pessoa "
+    sql += "WHERE status = " + ("TRUE" if status else "FALSE")
+    sql += " ORDER BY pessoa_id"
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
@@ -56,33 +57,22 @@ def selectPessoa(pessoaId, status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT pessoa_id, nome, email, telefone, endereco FROM pessoa WHERE pessoa_id = %s"
-    sql += " AND status = TRUE" if status else ""
+    sql = "SELECT pessoa_id, nome, email, telefone, endereco, status FROM pessoa WHERE pessoa_id = %s"
+    sql += " AND status = " + ("TRUE" if status else "FALSE")
     sql_values = cursor.mogrify(sql, (str(pessoaId), ))
     cursor.execute(sql_values)
     result = cursor.fetchone()
     finalize()
     return result
 
-def inativaPessoa(pessoaId):
+def altStatusPessoa(pessoaId, status=False):
     global conn
     global cursor
     initialize()
-    sql = """DO
-            $BODY$
-            BEGIN
-                IF exists(SELECT (1) FROM pessoa where pessoa_id = %s and status = FALSE) THEN
-                    UPDATE pessoa SET status = TRUE where pessoa_id = %s;
-                ELSE 
-                    UPDATE pessoa SET status = FALSE where pessoa_id = %s;
-            END IF;
-            END
-            $BODY$"""
-    sql_values = cursor.mogrify(sql, str(pessoaId))
+    sql = "UPDATE pessoa SET status = %s WHERE pessoa_id = %s"
+    sql_values = cursor.mogrify(sql, (status, str(pessoaId)))
     cursor.execute(sql_values)
     finalize()
-
-# "UPDATE pessoa SET status = FALSE WHERE pessoa_id = %s"
 
 # Produto
 
@@ -99,8 +89,9 @@ def selectProdutos(status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM produto" 
-    sql += " WHERE status = TRUE" if status else ""
+    sql = "SELECT * FROM produto " 
+    sql += "WHERE status = " + ("TRUE" if status else "FALSE")
+    sql += " ORDER BY produto_id"
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
@@ -110,8 +101,8 @@ def selectProduto(produtoId, status=True):
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM produto WHERE produto_id = %s" 
-    sql += " AND status = TRUE" if status else ""
+    sql = "SELECT * FROM produto WHERE produto_id = %s " 
+    sql += "AND status = " + ("TRUE" if status else "FALSE")
     sql_values = cursor.mogrify(sql, (str(produtoId), ))
     cursor.execute(sql_values)
     result = cursor.fetchone()
@@ -140,12 +131,12 @@ def updateProdutoQtd(produtoId, qtd):
     cursor.execute(sql_values)
     finalize()
 
-def inativaProduto(produtoId):
+def altStatusProduto(produtoId, status=False):
     global conn
     global cursor
     initialize()
-    sql = "UPDATE produto SET status = FALSE WHERE produto_id = %s"
-    sql_values = cursor.mogrify(sql, str(produtoId))
+    sql = "UPDATE produto SET status = %s WHERE produto_id = %s"
+    sql_values = cursor.mogrify(sql, (status, str(produtoId)))
     cursor.execute(sql_values)
     finalize()
 
@@ -169,7 +160,8 @@ def selectPedidos(status=True):
     global cursor
     initialize()
     sql = "SELECT pedido_id, usuario_id, cliente_id, TO_CHAR(data_pedido, 'HH24:MI dd/MM/YYYY'), status FROM pedido " 
-    sql += "WHERE status = TRUE" if status else ""
+    sql += "WHERE status = " + ("TRUE" if status else "FALSE")
+    sql += " ORDER BY pedido_id"
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
@@ -180,7 +172,7 @@ def selectPedido(pedidoId, status=True):
     global cursor
     initialize()
     sql = "SELECT pedido_id, usuario_id, cliente_id, TO_CHAR(data_pedido, 'HH24:MI dd/MM/YYYY'), status FROM pedido WHERE pedido_id = %s " 
-    sql += "AND status = TRUE" if status else ""
+    sql += "AND status = " + ("TRUE" if status else "FALSE")
     sql_values = cursor.mogrify(sql, (str(pedidoId), ))
     cursor.execute(sql_values)
     result = cursor.fetchone()
@@ -246,6 +238,7 @@ def selectItens(pedidoId, status=True):
         FROM item_pedido it
         INNER JOIN produto pr ON it.produto_id = pr.produto_id
         WHERE it.pedido_id = %s AND it.status = TRUE
+        ORDER BY (it.produto_id, it.pedido_id)
     """
     sql_values = cursor.mogrify(sql, (str(pedidoId), ))
     cursor.execute(sql_values)
@@ -261,6 +254,7 @@ def selectTodosItens():
         SELECT it.produto_id, it.pedido_id, pr.nome, it.quantidade, pr.preco, (it.quantidade * pr.preco)
         FROM item_pedido it
         INNER JOIN produto pr ON it.produto_id = pr.produto_id
+        ORDER BY (it.produto_id, it.pedido_id)
     """
     cursor.execute(sql)
     result = cursor.fetchall()
@@ -276,29 +270,73 @@ def inativaItemPedido(pedidoId, produtoId):
     cursor.execute(sql_values)
     finalize()
 
-def importaDados():
+# Graficos
+
+def selectVendas():
     global conn
     global cursor
     initialize()
-    sql = "SELECT * FROM pessoa"
+    sql = """
+        SELECT TO_CHAR(pd.data_pedido::timestamp::date, 'dd/MM'), COALESCE(SUM(it.preco_unitario * it.quantidade), SUM(it.preco_unitario * it.quantidade), 0)  
+        FROM item_pedido it 
+        RIGHT JOIN pedido pd ON it.pedido_id = pd.pedido_id  
+        GROUP BY (pd.data_pedido::timestamp::date) 
+        HAVING (pd.data_pedido::timestamp::date >= CURRENT_TIMESTAMP::timestamp::date - interval '7 days')
+        ORDER BY (pd.data_pedido::timestamp::date)
+        """
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
     return result
 
+def selectEstoqueBaixo(status=True):
+    global conn
+    global cursor
+    initialize()
+    sql = "SELECT * FROM produto WHERE quantidade <= 10"
+    sql += "AND status = " + ("TRUE" if status else "FALSE")
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    finalize()
+    return result
+
+def selectUltimasVendas(status=True):
+    global conn
+    global cursor
+    initialize()
+    sql =  """
+        SELECT pd.pedido_id, cli.nome as Cliente, usr.nome as Usuario, TO_CHAR(pd.data_pedido, 'HH24:MI dd/MM/YYYY'), COALESCE(SUM(it.preco_unitario * it.quantidade), SUM(it.preco_unitario * it.quantidade), 0)  
+        FROM item_pedido it 
+        RIGHT JOIN pedido pd ON it.pedido_id = pd.pedido_id  
+        INNER JOIN pessoa usr ON usr.pessoa_id = pd.usuario_id 
+        INNER JOIN pessoa cli ON cli.pessoa_id = pd.cliente_id
+        """
+    sql += "WHERE pd.status = TRUE " if status else ""
+    sql += """
+        GROUP BY (pd.pedido_id, cli.pessoa_id, usr.nome) 
+        ORDER BY (pd.pedido_id) DESC
+        LIMIT 5
+        """
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    finalize()
+    return result
+
+#Login
+
 def login(email, senha):
     global conn
     global cursor
     initialize()
-    sql = "SELECT email, senha FROM pessoa WHERE email = %s"
+    sql = "SELECT pessoa_id, email, senha FROM pessoa WHERE email = %s AND status = TRUE"
     sql_values = cursor.mogrify(sql, (email, ))
     cursor.execute(sql_values)
     result = cursor.fetchone()
     finalize()
-    if (result != None and result[1] == senha):
-        return True
+    if (result != None and result[2] == senha):
+        return result[0]
     else:
-        return False
+        return None
 
 p = models.Pessoa()
 p.nome = "Usuário 1"

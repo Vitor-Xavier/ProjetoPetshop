@@ -8,6 +8,10 @@ from tkinter import messagebox as mbox
 import json
 import os
 import tkinter
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 class FramePrincipal(Frame):
     _title = "Pet Shop"
@@ -27,7 +31,7 @@ class FramePrincipal(Frame):
     _secondaryTextColor = "#CCFFFFFF"
 
     #Inicializando o Menu Principal
-    def __init__(self, master=None):
+    def __init__(self, master=None, user=None):
         super().__init__()
         self.master.title(self._title)
         #self.master.resizable(False, False)
@@ -39,8 +43,9 @@ class FramePrincipal(Frame):
         self.addMenu()
         self.addFrame()
 
-        self.loggedUser = models.Pessoa()
-        self.loggedUser.pessoa_id = 1
+        self.loggedUser = user
+
+        self.btnInicioClick()
 
     def centralizar(self, largura, altura):
         px = int((self.master.winfo_screenwidth() - largura) / 2)
@@ -66,25 +71,15 @@ class FramePrincipal(Frame):
         self.frameMenu = Frame(bg=self._menuColor)
         self.frameMenu.pack(side=LEFT, fill=Y)
 
-        #Botão Usuarios
-        self.btnUsuarios = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
-        self.btnUsuarios["text"] = "Clientes"
-        self.btnUsuarios["font"] = self._fontButton
-        self.btnUsuarios["fg"] = self._bodyTextColor
-        self.btnUsuarios["command"] = self.btnUsuariosClick
-        self.btnUsuarios.bind("<Enter>", self.on_enter)
-        self.btnUsuarios.bind("<Leave>", self.on_leave)
-        self.btnUsuarios.pack(side=TOP, ipady=20, ipadx=60, fill=X)
-
-        #Botão Produtos
-        self.btnProdutos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
-        self.btnProdutos["text"] = "Produtos"
-        self.btnProdutos["font"] = self._fontButton
-        self.btnProdutos["fg"] = self._bodyTextColor
-        self.btnProdutos["command"] = self.btnProdutosClick
-        self.btnProdutos.bind("<Enter>", self.on_enter)
-        self.btnProdutos.bind("<Leave>", self.on_leave)
-        self.btnProdutos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
+        #Botão inicio
+        self.btnInicio = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
+        self.btnInicio["text"] = "Início"
+        self.btnInicio["font"] = self._fontButton
+        self.btnInicio["fg"] = self._bodyTextColor
+        self.btnInicio["command"] = self.btnInicioClick
+        self.btnInicio.bind("<Enter>", self.on_enter)
+        self.btnInicio.bind("<Leave>", self.on_leave)
+        self.btnInicio.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Novo Pedido
         self.btnPedidos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
@@ -105,6 +100,26 @@ class FramePrincipal(Frame):
         self.btnPedidos.bind("<Enter>", self.on_enter)
         self.btnPedidos.bind("<Leave>", self.on_leave)
         self.btnPedidos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
+
+        #Botão Usuarios
+        self.btnUsuarios = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
+        self.btnUsuarios["text"] = "Clientes"
+        self.btnUsuarios["font"] = self._fontButton
+        self.btnUsuarios["fg"] = self._bodyTextColor
+        self.btnUsuarios["command"] = self.btnUsuariosClick
+        self.btnUsuarios.bind("<Enter>", self.on_enter)
+        self.btnUsuarios.bind("<Leave>", self.on_leave)
+        self.btnUsuarios.pack(side=TOP, ipady=20, ipadx=60, fill=X)
+
+        #Botão Produtos
+        self.btnProdutos = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
+        self.btnProdutos["text"] = "Produtos"
+        self.btnProdutos["font"] = self._fontButton
+        self.btnProdutos["fg"] = self._bodyTextColor
+        self.btnProdutos["command"] = self.btnProdutosClick
+        self.btnProdutos.bind("<Enter>", self.on_enter)
+        self.btnProdutos.bind("<Leave>", self.on_leave)
+        self.btnProdutos.pack(side=TOP, ipady=20, ipadx=60, fill=X)
 
         #Botão Importar
         self.btnImportar = Button(self.frameMenu, bg=self._menuColor,borderwidth=0)
@@ -163,6 +178,9 @@ class FramePrincipal(Frame):
 
     # Commands dos botões laterias
 
+    def btnInicioClick(self):
+        self.homeFrame()
+
     def btnUsuariosClick(self):
         self.clientesFrame()
 
@@ -192,6 +210,81 @@ class FramePrincipal(Frame):
 
     # Frames Criados ao Clicar no Botão Lateral
 
+    def homeFrame(self):
+        self.frameMain.destroy()
+
+        self.frameMain = Frame(bg=self._backgroundColor)
+        self.frameMain.pack(side=RIGHT, fill=BOTH, expand=True)
+
+        self.frameSub = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameSub.pack(side=TOP, fill=Y, anchor=W)
+
+        self.lblHome = Label(self.frameSub, bg=self._backgroundColor)
+        self.lblHome["text"] = "Início"
+        self.lblHome["font"] = self._fontSubtitle
+        self.lblHome.pack(side=TOP, ipady=20, ipadx=40)
+
+        self.frameVendas = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameVendas.pack(side=LEFT, anchor=N, fill=BOTH, expand=True, padx=50, pady=30)
+
+        data = connect.selectVendas()
+        datas = [var[0] for var in data]
+        vendas = [var[1] for var in data]
+
+        f = Figure(figsize=(3,5), dpi=100)
+        a = f.add_subplot(111)
+        a.set_title('Vendas na última semana')
+        a.plot(datas,vendas)
+        a.set_xlabel('Datas')
+        a.set_ylabel('Valor de vendas em Reais (R$)')
+
+        self.canvas = FigureCanvasTkAgg(f, self.frameVendas)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+
+        self.frameListas = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameListas.pack(side=LEFT, anchor=N, fill=BOTH, expand=True, padx=40)
+
+        self.frameEstoque = Frame(self.frameListas, bg=self._backgroundColor)
+        self.frameEstoque.pack(side=TOP, anchor=N, fill=BOTH, pady=50)
+
+        self.lblEstoque = Label(self.frameEstoque, bg=self._backgroundColor)
+        self.lblEstoque["text"] = "Estoque baixo (menos de 10 itens)"
+        self.lblEstoque["font"] = self._fontText
+        self.lblEstoque.pack(side=TOP)
+
+        scrollY = Scrollbar(self.frameEstoque, orient=VERTICAL)
+
+        self.listEstoque = Listbox(self.frameEstoque, yscrollcommand=scrollY.set)
+        self.listEstoque["height"] = 5
+        self.listEstoque["selectmode"] = SINGLE
+
+        self.carregaEstoque()
+
+        self.listEstoque.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollY["command"] = self.listEstoque.yview
+        scrollY.pack(side=LEFT, fill=Y)
+
+        self.frameUltVendas = Frame(self.frameListas, bg=self._backgroundColor)
+        self.frameUltVendas.pack(side=TOP, anchor=N, fill=BOTH)
+
+        self.lblEstoque = Label(self.frameUltVendas, bg=self._backgroundColor)
+        self.lblEstoque["text"] = "Últimas vendas"
+        self.lblEstoque["font"] = self._fontText
+        self.lblEstoque.pack(side=TOP)
+
+        scrollY = Scrollbar(self.frameUltVendas, orient=VERTICAL)
+
+        self.listVendas = Listbox(self.frameUltVendas, yscrollcommand=scrollY.set)
+        self.listVendas["height"] = 5
+        self.listVendas["selectmode"] = SINGLE
+
+        self.carregaVendas()
+
+        self.listVendas.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollY["command"] = self.listVendas.yview
+        scrollY.pack(side=LEFT, fill=Y)
+
     def clientesFrame(self):
         self.frameMain.destroy()
 
@@ -216,7 +309,6 @@ class FramePrincipal(Frame):
         self.listClientes["selectmode"] = SINGLE
 
         self.carregaClientes()
-        self.listClientes.bind("<<ListboxSelect>>", self.onClienteSelected)
 
         self.listClientes.pack(side=LEFT, fill=BOTH, expand=True)
         scrollY["command"] = self.listClientes.yview
@@ -231,6 +323,7 @@ class FramePrincipal(Frame):
             rdb = Radiobutton(self.frameExpTypes, bg=self._backgroundColor)
             rdb["text"] = item
             rdb["variable"] = self.expPessoaVar
+            rdb["command"] = self.onRadioStatusClienteSelect
             rdb["value"] = item
             rdb.pack(side=LEFT, anchor=N, ipadx=8)
         self.expPessoaVar.set("Ativos")
@@ -501,6 +594,7 @@ class FramePrincipal(Frame):
             rdb = Radiobutton(self.frameExpTypes, bg=self._backgroundColor)
             rdb["text"] = item
             rdb["variable"] = self.expProdVar
+            rdb["command"] = self.onRadioStatusProdutoSelect
             rdb["value"] = item
             rdb.pack(side=LEFT, anchor=N, ipadx=8)
         self.expProdVar.set("Ativos")
@@ -702,7 +796,6 @@ class FramePrincipal(Frame):
             rdb = Radiobutton(self.frameExpTypes, bg=self._backgroundColor)
             rdb["text"] = item
             rdb["variable"] = self.expTypeVar
-            #rdb["command"] = self.onRadioSelect
             rdb["value"] = item
             rdb.pack(side=LEFT, anchor=N, ipadx=8)
         self.expTypeVar.set("Tudo")
@@ -883,7 +976,6 @@ class FramePrincipal(Frame):
 
         self.entryPedidoData = Entry(self.framePedidoData, bg=self._backgroundColor,width=50)
         self.entryPedidoData["font"] = self._fontBody
-        self.entryPedidoData.configure(state='readonly')
         self.entryPedidoData.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.entryPedidoData.insert(0, data_pedido)
@@ -1055,13 +1147,13 @@ class FramePrincipal(Frame):
     
     def btnInativaProdutoClick(self):
         cod = self.getSelectedProduto()
-        connect.inativaProduto(cod)
-        self.carregaProdutos()
+        connect.altStatusProduto(cod, self.expProdVar.get() != "Ativos")
+        self.carregaProdutos(self.expProdVar.get() == "Ativos")
 
     def btnInativaPessoaClick(self):
         cod = self.getSelectedPessoa()
-        connect.inativaPessoa(cod)
-        self.carregaClientes()
+        connect.altStatusPessoa(cod, self.expPessoaVar.get() != "Ativos")
+        self.carregaClientes(self.expPessoaVar.get() == "Ativos")
 
     def onPedidoSelected(self, event):
         pos = self.listPedidos.curselection()
@@ -1069,10 +1161,6 @@ class FramePrincipal(Frame):
         pedidoId = int(item[3:7])
         pedido = connect.selectPedido(pedidoId)
         self.sobrePedidoFrame(pedido)
-
-    def onClienteSelected(self, event):
-        cod = self.getSelectedPessoa()
-        print("Id: %s" %str(cod))
 
     def btnExportarDadosClick(self):
         if (self.expTypeVar.get() == "Tudo"):
@@ -1209,6 +1297,14 @@ class FramePrincipal(Frame):
     def getSelectPedCliente(self):
         return int(self.cliente_value.get()[0:4])
 
+    def onRadioStatusClienteSelect(self):
+        self.carregaClientes(self.expPessoaVar.get() == "Ativos")
+        self.btnDeleteCliente["text"] = "Inativar" if self.expPessoaVar.get() == "Ativos" else "Ativar"
+
+    def onRadioStatusProdutoSelect(self):
+        self.carregaProdutos(self.expProdVar.get() == "Ativos")
+        self.btnDeleteProduto["text"] = "Inativar" if self.expProdVar.get() == "Ativos" else "Ativar"
+
     # Atualiza listas
 
     def carregaClientes(self, onlyAtivos=True):
@@ -1241,6 +1337,18 @@ class FramePrincipal(Frame):
         self.listItens.delete(0, END)
         for item in itens:
             self.listItens.insert(END, "%-4d %-4d Produto: %-15s Quantidade: %-4d Preço Unit.: %-8s Preço Total: %-8s" %(item[0], item[1], item[2], item[3], item[4], item[5]))
+ 
+    def carregaEstoque(self, onlyAtivos=True):
+        produtos = connect.selectEstoqueBaixo(onlyAtivos)
+        self.listEstoque.delete(0, END)
+        for produto in produtos:
+            self.listEstoque.insert(END, "Nome: %-18s Quantidade: %-4s" %(produto[1], produto[3]))
+        
+    def carregaVendas(self, onlyAtivos=True):
+        pedidos = connect.selectUltimasVendas(onlyAtivos)
+        self.listVendas.delete(0, END)
+        for venda in pedidos:
+            self.listVendas.insert(END, "Data: %-20s Cliente: %-18s Total: %-6s" %(venda[3], venda[2], venda[4]))
 
     def carregaBoxClientes(self):
         pessoas = connect.selectPessoas()
@@ -1291,8 +1399,8 @@ class FramePrincipal(Frame):
         for item in itens:
                 self.listImportados.insert(END, "PedidoId: %-4d ProdutoId: %-5s Quantidade: %-5s Preço Unitario: %-16s" %(item["pedido_id"], item["produto_id"], item["quantidade"], item["preco_unitario"])) 
 
-def main():
-    app = FramePrincipal()
+def main(user):
+    app = FramePrincipal(user=user)
     app.mainloop()
 
-main()
+#main()

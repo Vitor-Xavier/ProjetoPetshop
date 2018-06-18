@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox as mbox
 import PetShop
 import connect
+import models
 
 class FramePrincipal(Frame):
 
@@ -88,10 +89,17 @@ class FramePrincipal(Frame):
             return
         email = self.entryUsuario.get()
         senha = self.entrySenha.get()
-        connect.login(email, senha)
-        if (connect.login(email, senha)):
+        pessoaId = connect.login(email, senha)
+        if (pessoaId != None):
             self.destroyFrame()
-            PetShop.main()
+            pessoa = connect.selectPessoa(pessoaId)
+            usr = models.Pessoa()
+            usr.pessoa_id = pessoa[0]
+            usr.nome = pessoa[1]
+            usr.email = pessoa[2]
+            usr.telefone = pessoa[3]
+            usr.endereco = pessoa[4]
+            PetShop.main(user=usr)
         else:
             self.exibirMensagem("Login incorreto.")
 
