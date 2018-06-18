@@ -34,8 +34,8 @@ class FramePrincipal(Frame):
     def __init__(self, master=None, user=None):
         super().__init__()
         self.master.title(self._title)
-        #self.master.resizable(False, False)
-        #self.master.iconbitmap("res/icon.ico")
+        self.master.resizable(True, True)
+        self.master.iconbitmap("res/icon.ico")
         self.master["bg"] = self._backgroundColor
         self.centralizar(1000, 600) # Resolução da tela principal
         self.pack()
@@ -995,6 +995,21 @@ class FramePrincipal(Frame):
 
         self.entryPedQtd.insert(0, "1")
 
+        self.frameTotal = Frame(self.frameMain, bg=self._backgroundColor, width=50)
+        self.frameTotal.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+
+        self.lblTotal = Label(self.frameTotal, bg=self._backgroundColor)
+        self.lblTotal["text"] = "Valor Total"
+        self.lblTotal["font"] = self._fontText
+        self.lblTotal.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryValorTotal = Entry(self.frameTotal, bg=self._backgroundColor,width=20)
+        self.entryValorTotal["font"] = self._fontBody
+        self.entryValorTotal.pack(side=TOP, anchor=W, padx=15, pady=5)
+
+        self.entryValorTotal.insert(0, "R$: 0.00")
+        self.entryValorTotal.configure(state='readonly')
+
         self.frameProdItens = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameProdItens.pack(anchor=N, fill=BOTH, padx=50, pady=15)
 
@@ -1229,14 +1244,18 @@ class FramePrincipal(Frame):
             connect.updateProdutoQtd(item.produto_id, item.quantidade * -1)
             self.carregaItens()
             self.carregaPedProdutos()
+            self.atualizaTotalPedido()
         else:
             self.exibirMensagem("Quantidade superior ao disponivel em estoque")
 
     def btnRemoveItemClick(self):
+        quantidade = int(self.entryPedQtd.get())
         produtoId, pedidoId = self.getSelectedItemProduto()
         connect.inativaItemPedido(pedidoId, produtoId)
+        connect.updateProdutoQtd(produtoId, quantidade)
         self.carregaItens()
         self.carregaPedProdutos()
+        self.atualizaTotalPedido()
         
     def btnAddClienteBancoClick(self):
         pessoa = models.Pessoa()
@@ -1297,6 +1316,13 @@ class FramePrincipal(Frame):
     def getSelectPedCliente(self):
         return int(self.cliente_value.get()[0:4])
 
+    def atualizaTotalPedido(self):
+        pedidoId = int(self.entryPedidoId.get())
+        self.entryValorTotal.configure(state='normal')
+        self.entryValorTotal.delete(0, END)
+        self.entryValorTotal.insert(0, "R$: " + str(connect.selectTotalPedido(pedidoId)))
+        self.entryValorTotal.configure(state='readonly')
+
     def onRadioStatusClienteSelect(self):
         self.carregaClientes(self.expPessoaVar.get() == "Ativos")
         self.btnDeleteCliente["text"] = "Inativar" if self.expPessoaVar.get() == "Ativos" else "Ativar"
@@ -1329,7 +1355,7 @@ class FramePrincipal(Frame):
         pedidos = connect.selectPedidosJoin(onlyAtivos)
         self.listPedidos.delete(0, END)
         for item in pedidos:
-            self.listPedidos.insert(END, "Id: %-4d Operador: %-30s Cliente: %-40s Data: %-8s Preço: %-10s" %(item[0], item[1], item[2], item[3], item[4]))
+            self.listPedidos.insert(END, "Id: %-4d Operador: %-30s Cliente: %-40s Data: %-8s Preço: %-10s" %(item[0], item[2], item[1], item[3], item[4]))
 
     def carregaItens(self):
         pedidoId = int(self.entryPedidoId.get())

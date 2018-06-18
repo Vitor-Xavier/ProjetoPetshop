@@ -43,19 +43,7 @@ CREATE TABLE item_pedido (
 
 -- INSERTS
 
-INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES ('usr1', 'usr1@mail.com', '12345', '+551690909090', 'Rua Abilio Sampaio, 9666');
-
-INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES ('usr2', 'usr2@mail.com', '12345', '+551680808080', 'Rua Sampaio Abilio, 6669');
-
-INSERT INTO produto (nome, descricao, quantidade, preco) 
-VALUES 
-('Tigela', 'Tigela para pets', 15, 19.9);
-
-INSERT INTO pedido (usuario_id, cliente_id, data_pedido) VALUES (2, 1, CURRENT_TIMESTAMP);
-
-INSERT INTO item_pedido (produto_id, pedido_id, quantidade, preco_unitario) 
-VALUES
-(1, 1, 3, 19.9);
+INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES ('admin', 'admin', 'pet', '000', '999')
 
 -- SELECTS
 

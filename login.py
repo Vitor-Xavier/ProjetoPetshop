@@ -10,7 +10,7 @@ class FramePrincipal(Frame):
         super().__init__()
         self.centralizar(300, 190)
         self.master.title("Pet Shop")
-        #self.master.iconbitmap("res/icon.ico")
+        self.master.iconbitmap("res/icon.ico")
         self.master.configure(background="white")
         self.master.resizable(False, False)
         self.pack()

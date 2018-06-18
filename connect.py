@@ -47,7 +47,7 @@ def selectPessoas(status=True):
     initialize()
     sql = "SELECT pessoa_id, nome, email, telefone, endereco FROM pessoa "
     sql += "WHERE status = " + ("TRUE" if status else "FALSE")
-    sql += " ORDER BY pessoa_id"
+    sql += " AND (senha IS NULL OR senha = '') ORDER BY pessoa_id"
     cursor.execute(sql)
     result = cursor.fetchall()
     finalize()
@@ -206,6 +206,21 @@ def selectPedidosJoin(status=True):
         """
     cursor.execute(sql)
     result = cursor.fetchall()
+    finalize()
+    return result
+
+def selectTotalPedido(pedidoId):
+    global conn
+    global cursor
+    initialize()
+    sql =  """
+        SELECT COALESCE(SUM(quantidade * preco_unitario), SUM(quantidade * preco_unitario), 0)
+        FROM item_pedido
+        WHERE pedido_id = %s
+        """
+    sql_values = cursor.mogrify(sql, str(pedidoId))
+    cursor.execute(sql_values)
+    result = cursor.fetchone()[0]
     finalize()
     return result
 
