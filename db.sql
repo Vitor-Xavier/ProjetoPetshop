@@ -43,7 +43,7 @@ CREATE TABLE item_pedido (
 
 -- INSERTS
 
-INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES ('admin', 'admin', 'pet', '000', '999')
+INSERT INTO pessoa (nome, email, senha, telefone, endereco) VALUES ('admin', 'admin', 'pet', '000', '999');
 
 -- SELECTS
 

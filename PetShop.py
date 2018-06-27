@@ -383,18 +383,18 @@ class FramePrincipal(Frame):
         self.lblClientes["font"] = self._fontSubtitle
         self.lblClientes.pack(side=TOP, ipady=20, ipadx=40)
 
-        if cliente != None:
-            self.frameClienteId = Frame(self.frameMain, bg=self._backgroundColor)
-            self.frameClienteId.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
 
-            self.lblClienteId = Label(self.frameClienteId, bg=self._backgroundColor)
-            self.lblClienteId["text"] = "Código"
-            self.lblClienteId["font"] = self._fontText
-            self.lblClienteId.pack(side=TOP, fill=Y, anchor=W)
+        self.frameClienteId = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameClienteId.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
 
-            self.entryClienteId = Entry(self.frameClienteId, bg=self._backgroundColor, width=50)
-            self.entryClienteId["font"] = self._fontBody
-            self.entryClienteId.pack(side=TOP, anchor=W, padx=15, pady=5)
+        self.lblClienteId = Label(self.frameClienteId, bg=self._backgroundColor)
+        self.lblClienteId["text"] = "Código"
+        self.lblClienteId["font"] = self._fontText
+        self.lblClienteId.pack(side=TOP, fill=Y, anchor=W)
+
+        self.entryClienteId = Entry(self.frameClienteId, bg=self._backgroundColor, width=50)
+        self.entryClienteId["font"] = self._fontBody
+        self.entryClienteId.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigName = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameDigName.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
@@ -454,13 +454,15 @@ class FramePrincipal(Frame):
         self.btnAddCliente.bind("<Leave>", self.on_leave)
         self.btnAddCliente.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
 
+        self.entryClienteId.insert(0, "0")
         if cliente != None:
+            self.entryClienteId.delete(0, END)
             self.entryClienteId.insert(0, cliente[0])
-            self.entryClienteId.configure(state='readonly')
             self.entryName.insert(0, cliente[1])
             self.entryMail.insert(0, cliente[2])
             self.entryFone.insert(0, cliente[3])
             self.entryEndereco.insert(0, cliente[4])
+        self.entryClienteId.configure(state='readonly')
 
     def addProdutoFrame(self, produto=None):
         self.frameMain.destroy()
@@ -476,18 +478,17 @@ class FramePrincipal(Frame):
         self.lblProdutos["font"] = self._fontSubtitle
         self.lblProdutos.pack(side=TOP, ipady=20, ipadx=40)
 
-        if produto != None:
-            self.frameProdId = Frame(self.frameMain, bg=self._backgroundColor)
-            self.frameProdId.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
+        self.frameProdId = Frame(self.frameMain, bg=self._backgroundColor)
+        self.frameProdId.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
 
-            self.lblProdId = Label(self.frameProdId, bg=self._backgroundColor)
-            self.lblProdId["text"] = "Código"
-            self.lblProdId["font"] = self._fontText
-            self.lblProdId.pack(side=TOP, fill=Y, anchor=W)
+        self.lblProdId = Label(self.frameProdId, bg=self._backgroundColor)
+        self.lblProdId["text"] = "Código"
+        self.lblProdId["font"] = self._fontText
+        self.lblProdId.pack(side=TOP, fill=Y, anchor=W)
 
-            self.entryProdId = Entry(self.frameProdId, bg=self._backgroundColor, width=50)
-            self.entryProdId["font"] = self._fontBody
-            self.entryProdId.pack(side=TOP, anchor=W, padx=15, pady=5)
+        self.entryProdId = Entry(self.frameProdId, bg=self._backgroundColor, width=50)
+        self.entryProdId["font"] = self._fontBody
+        self.entryProdId.pack(side=TOP, anchor=W, padx=15, pady=5)
 
         self.frameDigNameProd = Frame(self.frameMain, bg=self._backgroundColor)
         self.frameDigNameProd.pack(anchor=N, fill=BOTH, padx=60, ipadx=60)
@@ -546,13 +547,15 @@ class FramePrincipal(Frame):
         self.btnAddProduto.bind("<Leave>", self.on_leave)
         self.btnAddProduto.pack(side=LEFT, ipady=5, ipadx=10, padx=10)
 
+        self.entryProdId.insert(0, "0")
         if produto != None:
+            self.entryProdId.delete(0, END)
             self.entryProdId.insert(0, produto[0])
             self.entryNameProd.insert(0, produto[1])
             self.entryDescricao.insert(0, produto[2])
             self.entryQuant.insert(0, produto[3])
             self.entryPreco.insert(0, produto[4])
-            self.entryProdId.configure(state='readonly')
+        self.entryProdId.configure(state='readonly')
 
     def produtosFrame(self):
         self.frameMain.destroy()
@@ -1264,7 +1267,8 @@ class FramePrincipal(Frame):
         pessoa.telefone = self.entryFone.get()
         pessoa.endereco = self.entryEndereco.get()
 
-        if (self.entryClienteId.winfo_exists()):
+
+        if (self.entryClienteId.get() != "0"):
             pessoa.pessoa_id = self.entryClienteId.get()
             connect.updatePessoa(pessoa)
         else:
@@ -1278,7 +1282,7 @@ class FramePrincipal(Frame):
         produto.quantidade = self.entryQuant.get()
         produto.preco = self.entryPreco.get()
 
-        if (self.entryProdId.winfo_exists()):
+        if (self.entryProdId.get() != "0"):
             produto.produto_id = self.entryProdId.get()
             connect.updateProduto(produto)
         else:
@@ -1408,7 +1412,7 @@ class FramePrincipal(Frame):
     def importedPessoas(self, pessoas):
         self.listImportados.insert(END, "Pessoas")
         for pessoa in pessoas:
-                self.listImportados.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Senha: %-10s Telefone: %-16s Endereco: %-40s" %(pessoa["pessoa_id"], pessoa["nome"], pessoa["email"], pessoa["senha"], pessoa["telefone"], pessoa["endereco"])) 
+                self.listImportados.insert(END, "Id: %-4d Nome: %-30s Email: %-25s Telefone: %-16s Endereco: %-40s" %(pessoa["pessoa_id"], pessoa["nome"], pessoa["email"], pessoa["telefone"], pessoa["endereco"])) 
 
     def importedProdutos(self, produtos):
         self.listImportados.insert(END, "Produtos")
@@ -1418,12 +1422,12 @@ class FramePrincipal(Frame):
     def importedPedidos(self, pedidos):
         self.listImportados.insert(END, "Pedidos")
         for pedido in pedidos:
-                self.listImportados.insert(END, "Id: %-4d ClienteId: %-5s UsuarioId: %-5s Data: %-16s" %(pedido["pedido_id"], pedido["cliente_id"], pedido["usuario_id"], pedido["data_pedido"])) 
+                self.listImportados.insert(END, "Id: %-4d ClienteId: %-5s UsuarioId: %-5s Data: %-16s" %(pedido["pedido_id"], pedido["cliente_id"], pedido["usuario_id"], pedido["to_char"])) 
 
     def importedItens(self, itens):
         self.listImportados.insert(END, "Itens")
         for item in itens:
-                self.listImportados.insert(END, "PedidoId: %-4d ProdutoId: %-5s Quantidade: %-5s Preço Unitario: %-16s" %(item["pedido_id"], item["produto_id"], item["quantidade"], item["preco_unitario"])) 
+                self.listImportados.insert(END, "PedidoId: %-4d ProdutoId: %-5s Quantidade: %-5s Preço Unitario: %-16s" %(item["pedido_id"], item["produto_id"], item["quantidade"], item["preco"])) 
 
 def main(user):
     app = FramePrincipal(user=user)

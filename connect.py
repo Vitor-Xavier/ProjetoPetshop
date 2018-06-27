@@ -1,6 +1,7 @@
 import psycopg2 as pg
 import psycopg2.extras as pg_ex
 import models
+from datetime import datetime
 
 def initialize():
     global conn
@@ -148,6 +149,23 @@ def insertPedido(pedido):
     initialize()
     sql = "INSERT INTO pedido (usuario_id, cliente_id, data_pedido, status) VALUES (%s, %s, CURRENT_TIMESTAMP, FALSE) RETURNING pedido_id, TO_CHAR(data_pedido, 'HH24:MI dd/MM/YYYY')"
     sql_values = cursor.mogrify(sql, (pedido.usuario_id, pedido.cliente_id))
+    cursor.execute(sql_values)
+    ped = cursor.fetchone()
+    pedidoId = ped[0]
+    data_pedido = ped[1]
+    finalize()
+    return pedidoId, data_pedido
+
+def importaPedido(pedido):
+    global conn
+    global cursor
+    initialize()
+
+    datetime_object = datetime.strptime(pedido.data_pedido, '%H:%M %d/%m/%Y')
+    datastr = datetime_object.strftime("%Y-%m-%d %H:%M:00.000000")
+
+    sql = "INSERT INTO pedido (usuario_id, cliente_id, data_pedido, status) VALUES (%s, %s, %s, TRUE) RETURNING pedido_id, TO_CHAR(data_pedido, 'HH24:MI dd/MM/YYYY')"
+    sql_values = cursor.mogrify(sql, (pedido.usuario_id, pedido.cliente_id, datastr))
     cursor.execute(sql_values)
     ped = cursor.fetchone()
     pedidoId = ped[0]
@@ -353,13 +371,21 @@ def login(email, senha):
     else:
         return None
 
-p = models.Pessoa()
-p.nome = "Usuário 1"
-p.email = "usuario@mail.com"
-p.senha = "123"
-p.telefone = "1234567890"
-p.endereco = "Rua 1"
+# p = models.Pessoa()
+# p.nome = "Usuário 1"
+# p.email = "usuario@mail.com"
+# p.senha = "123"
+# p.telefone = "1234567890"
+# p.endereco = "Rua 1"
 
-#insertPessoa(p)
+# f1 = models.Pessoa()
+# f.nome = "Fernando Marchetti"
+# f.email = "fermarchetti83@mail.com"
+# f.senha = "123"
+# f.telefone = "1234567890"
+# f.endereco = "Rua 1"
+
+
+# insertPessoa(f)
 #selectPessoas()
 #login("usuario@mail.com", "123")

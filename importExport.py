@@ -119,7 +119,7 @@ def carregarPessoas(pessoas):
         p.pessoa_id = pessoa["pessoa_id"]
         p.nome = pessoa["nome"]
         p.email = pessoa["email"]
-        p.senha = pessoa["senha"]
+        #p.senha = pessoa["senha"]
         p.telefone = pessoa["telefone"]
         connect.insertPessoa(p)
 
@@ -139,8 +139,9 @@ def carregarPedidos(pedidos):
         p.pedido_id = pedido["pedido_id"]
         p.cliente_id = pedido["cliente_id"]
         p.usuario_id = pedido["usuario_id"]
-        p.data_pedido = pedido["data_pedido"]
-        connect.insertPedido(p)
+        p.data_pedido = pedido["to_char"]
+
+        connect.importaPedido(p)
 
 def carregarItensPedidos(itens):
     for item in itens:
@@ -148,7 +149,11 @@ def carregarItensPedidos(itens):
         it.pedido_id = item["pedido_id"]
         it.produto_id = item["produto_id"]
         it.quantidade = item["quantidade"]
-        it.preco_unitario = item["preco_unitario"]
+        it.preco_unitario = item["preco"]
         connect.insertItemPedido(it)
+
+
+
+        #https://raw.githubusercontent.com/Vitor-Xavier/ProjetoPetshop/master/banco_petshop.json
 
 # https://raw.githubusercontent.com/Vitor-Xavier/JsonTst/master/banco.json
